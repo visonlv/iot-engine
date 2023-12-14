@@ -35,6 +35,7 @@ const (
 	cancelContextEventType
 	saveShadowResultEventType
 	getDeviceListEventType
+	getProductMapEventType
 )
 
 type ChanEvent struct {
@@ -61,6 +62,11 @@ type addWatchEventReq struct {
 	contextId      string
 	ctx            context.Context
 	watchSourceReq *pb.ForwardingWatchReq
+}
+
+type getProductMapResp struct {
+	pk2Product map[string]*Product
+	err        error
 }
 
 type executorChild struct {
@@ -150,6 +156,11 @@ func (s *executorChild) handleMsg(event *ChanInEvent) {
 		outCh <- &ChanEvent{
 			eventType: eventIn.eventType,
 			param:     s.getDeviceList(eventParam.([]string)),
+		}
+	case getProductMapEventType:
+		outCh <- &ChanEvent{
+			eventType: eventIn.eventType,
+			param:     s.getProductMap(eventParam.([]string)),
 		}
 	default:
 		logger.Infof("[forwarding] not suport eventType:%d", eventType)
@@ -313,7 +324,18 @@ func (s *executorChild) getDeviceList(deviceSn []string) []*Device {
 		}
 	}
 	return devices
+}
 
+func (s *executorChild) getProductMap(pks []string) *getProductMapResp {
+	pk2Product := make(map[string]*Product, 0)
+	for _, v := range pks {
+		p, err := s.products.GetProduct(v)
+		if err != nil {
+			return &getProductMapResp{err: err}
+		}
+		pk2Product[v] = p
+	}
+	return &getProductMapResp{pk2Product: pk2Product}
 }
 
 func (s *executorChild) asyncAddEvent(event *ChanInEvent) {

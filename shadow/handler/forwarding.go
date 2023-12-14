@@ -52,6 +52,11 @@ func (the *ForwardingService) Properties(ctx context.Context, req *pb.Forwarding
 
 	// 产品过滤 或者整个分组过滤
 	if len(req.Pks) > 0 || (len(req.Pks) == 0 && len(req.Sns) == 0) {
+		if req.WithDefault {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = "默认属性必须指定设备"
+			return nil
+		}
 		memMap := make(map[string]*pb.ForwardingProperty)
 		for _, v := range list {
 			memMap[v.Sn] = v
@@ -103,6 +108,7 @@ func (the *ForwardingService) Properties(ctx context.Context, req *pb.Forwarding
 					}
 				}
 				lastList = append(lastList, &pb.ForwardingProperty{
+					Pk:          v.Pk,
 					Sn:          v.Sn,
 					PropertyMap: newPropertyMap,
 				})
@@ -114,11 +120,6 @@ func (the *ForwardingService) Properties(ctx context.Context, req *pb.Forwarding
 
 	// 设备方式过滤
 	if len(req.Sns) > 0 {
-		//内存包含所有
-		if len(req.Sns) == len(list) {
-			resp.List = list
-			return nil
-		}
 		//去除内存获取的属性
 		memMap := make(map[string]*pb.ForwardingProperty)
 		for _, v := range list {
@@ -131,19 +132,21 @@ func (the *ForwardingService) Properties(ctx context.Context, req *pb.Forwarding
 			}
 		}
 
-		dbList, err := model.ShadowListInSn(nil, newSns)
-		if err != nil {
-			resp.Code = errorsx.FAIL.Code
-			resp.Msg = fmt.Sprintf("数据库获取列表错误:%s", err.Error())
-			return nil
-		}
+		dbList := make([]*model.ShadowModel, 0)
+		if len(req.Sns) != len(list) {
+			dbList, err = model.ShadowListInSn(nil, newSns)
+			if err != nil {
+				resp.Code = errorsx.FAIL.Code
+				resp.Msg = fmt.Sprintf("数据库获取列表错误:%s", err.Error())
+				return nil
+			}
 
-		if len(dbList) != len(newSns) {
-			resp.Code = errorsx.FAIL.Code
-			resp.Msg = fmt.Sprintf("设备长度不一致:结果长度:%d 入参长度:%d", len(dbList), len(newSns))
-			return nil
+			if len(dbList) != len(newSns) {
+				resp.Code = errorsx.FAIL.Code
+				resp.Msg = fmt.Sprintf("设备长度不一致:结果长度:%d 入参长度:%d", len(dbList), len(newSns))
+				return nil
+			}
 		}
-
 		for _, v := range dbList {
 			s := &define.Shadow{}
 			err := json.Unmarshal([]byte(v.Shadow), s)
@@ -175,19 +178,57 @@ func (the *ForwardingService) Properties(ctx context.Context, req *pb.Forwarding
 					UpdateTime: v.Current.UpdatedTime,
 				}
 			}
-			if codeMap != nil {
-				if len(codeMap) != len(newPropertyMap) {
-					resp.Code = errorsx.FAIL.Code
-					resp.Msg = fmt.Sprintf("影子服务数据库属性跟入参数量不一致: sn:%s 结果长度:%d 入参长度:%d", v.Sn, len(newPropertyMap), len(codeMap))
-					return nil
-				}
-			}
-
 			list = append(list, &pb.ForwardingProperty{
+				Pk:          v.Pk,
 				Sn:          v.Sn,
 				PropertyMap: newPropertyMap,
 			})
 		}
+
+		// 统一加默认值
+		if req.WithDefault {
+			// 获取所有产品
+			pkMap := make(map[string]string)
+			pks := make([]string, 0)
+			for _, v := range list {
+				if _, ok := pkMap[v.Pk]; !ok {
+					pkMap[v.Pk] = v.Pk
+					pks = append(pks, v.Pk)
+				}
+			}
+
+			ps, err := forwarding.GetProductByPks(pks)
+			if err != nil {
+				resp.Code = errorsx.FAIL.Code
+				resp.Msg = fmt.Sprintf("获取产品列表失败:%s", err.Error())
+				return nil
+			}
+
+			for _, v := range list {
+				p := ps[v.Pk]
+				for code, _ := range codeMap {
+					if _, ok := v.PropertyMap[code]; !ok {
+						def, ok1 := p.ThingInfo.PropertyMap[code]
+						if !ok1 {
+							resp.Code = errorsx.FAIL.Code
+							resp.Msg = fmt.Sprintf("产品:%s 属性%s 物模型没有定义", v.Pk, code)
+							return nil
+						}
+						vl, err := define.GetPropertyDefaulValue(def)
+						if err != nil {
+							resp.Code = errorsx.FAIL.Code
+							resp.Msg = fmt.Sprintf("获取默认值失败:%s", err.Error())
+							return nil
+						}
+						v.PropertyMap[code] = &pb.ForwardingPropertyItem{
+							Value:      vl,
+							UpdateTime: 0,
+						}
+					}
+				}
+			}
+		}
+
 		resp.List = list
 		return nil
 	}

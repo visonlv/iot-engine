@@ -57,6 +57,8 @@ func (m *ForwardingPropertiesReq) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for WithDefault
+
 	if len(errors) > 0 {
 		return ForwardingPropertiesReqMultiError(errors)
 	}
@@ -264,6 +266,8 @@ func (m *ForwardingProperty) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Pk
 
 	// no validation rules for Sn
 

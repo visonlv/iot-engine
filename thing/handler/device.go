@@ -182,7 +182,6 @@ func (the *DeviceService) Page(ctx context.Context, req *pb.DevicePageReq, resp 
 			itemRet.Online = p.Value == "true"
 		}
 		listRet = append(listRet, itemRet)
-
 	}
 
 	resp.Items = listRet
@@ -213,6 +212,11 @@ func (the *DeviceService) Properties(ctx context.Context, req *pb.DeviceProperti
 	}
 
 	shadownMap, err := device.GetDeviceProperties(m.Sn, req.Codes)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("获取当前属性失败:%s", err.Error())
+		return nil
+	}
 
 	list, err := model.ProductModelList(nil, pm.Id, "", "", string(define.ModelTypeProperty))
 	if err != nil {

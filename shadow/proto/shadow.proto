@@ -69,6 +69,7 @@ message ForwardingPropertiesReq {
     repeated string pks = 1;//空代表所有
     repeated string sns = 2 ;//空代表所有
     repeated string codes = 3;//空代表所有
+    bool with_default = 4;
 }
 
 message ForwardingPropertyItem {
@@ -77,8 +78,9 @@ message ForwardingPropertyItem {
 }
 
 message ForwardingProperty {
-    string sn = 1;
-    map<string, ForwardingPropertyItem> property_map = 2;
+    string pk = 1;
+    string sn = 2;
+    map<string, ForwardingPropertyItem> property_map = 3;
 }
 
 message ForwardingPropertiesResp{

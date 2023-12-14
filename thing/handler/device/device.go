@@ -10,8 +10,9 @@ import (
 
 func GetDevicesProperties(sns []string, codes []string) (map[string]map[string]*shadowpb.ForwardingPropertyItem, error) {
 	newResp, err := app.Client.ForwardingService.Properties(context.Background(), &shadowpb.ForwardingPropertiesReq{
-		Sns:   sns,
-		Codes: codes,
+		Sns:         sns,
+		Codes:       codes,
+		WithDefault: true,
 	})
 
 	if err != nil {

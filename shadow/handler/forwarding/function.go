@@ -30,6 +30,7 @@ func GetProperties(req *pb.ForwardingPropertiesReq) ([]*pb.ForwardingProperty, e
 			codeMap[v] = v
 		}
 	}
+
 	// 多个节点请求并合并
 	enterChild2Sns := make(map[int][]string)
 	if len(req.Pks) > 0 || len(req.Sns) == 0 {
@@ -83,12 +84,8 @@ func GetProperties(req *pb.ForwardingPropertiesReq) ([]*pb.ForwardingProperty, e
 					}
 				}
 
-				if codeMap != nil {
-					if len(codeMap) != len(propertyMap) {
-						return nil, fmt.Errorf("影子服务属性跟入参数量不一致: sn:%s 结果长度:%d 入参长度:%d", v.Sn, len(propertyMap), len(codeMap))
-					}
-				}
 				resp = append(resp, &pb.ForwardingProperty{
+					Pk:          v.Pk,
 					Sn:          v.Sn,
 					PropertyMap: propertyMap,
 				})
@@ -205,4 +202,19 @@ func handlerNatsMsg(topic string, msg *messaging.Message) error {
 	}
 	_p.getExecutorChild(msg.Sn).ayncAddSimpleEvent(natsEventType, msg)
 	return nil
+}
+
+func GetProductByPks(pks []string) (map[string]*Product, error) {
+	event := &ChanInEvent{
+		outCh: make(chan *ChanEvent),
+		in: &ChanEvent{
+			eventType: getProductMapEventType,
+			param:     pks,
+		},
+	}
+
+	_p.executorChildren[0].asyncAddEvent(event)
+	result := <-event.outCh
+	resp := result.param.(*getProductMapResp)
+	return resp.pk2Product, resp.err
 }

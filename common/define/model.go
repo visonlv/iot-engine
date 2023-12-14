@@ -543,3 +543,20 @@ func ParseModelItem(name, code string, btype ModelType, modelDef string) (any, e
 	}
 	return nil, fmt.Errorf("不支持该类型 :%v", btype)
 }
+
+func GetPropertyDefaulValue(def *Property) (string, error) {
+	if DataType(def.Type) == DataTypeBool {
+		return cast.ToStringE(def.BoolOptions.Default)
+	} else if DataType(def.Type) == DataTypeInt {
+		return cast.ToStringE(def.IntOptions.Default)
+	} else if DataType(def.Type) == DataTypeString {
+		return "", nil
+	} else if DataType(def.Type) == DataTypeFloat {
+		return cast.ToStringE(def.FloatOptions.Default)
+	} else if DataType(def.Type) == DataTypeArray {
+		return "[]", nil
+	} else if DataType(def.Type) == DataTypeObject {
+		return "{}", nil
+	}
+	return "", fmt.Errorf("不支持该类型 :%v", def.Type)
+}

@@ -465,6 +465,9 @@
             "type": "string"
           },
           "title": "空代表所有"
+        },
+        "with_default": {
+          "type": "boolean"
         }
       }
     },
@@ -490,6 +493,9 @@
     "protoForwardingProperty": {
       "type": "object",
       "properties": {
+        "pk": {
+          "type": "string"
+        },
         "sn": {
           "type": "string"
         },
