@@ -1,0 +1,18 @@
+syntax = "proto3";
+package messaging;
+
+option go_package = "github.com/visonlv/iot-engine/common/proto/messaging;messaging";
+
+message Message {
+	string id         = 1;
+	string context_id = 2;
+	string pk         = 3;
+	string sn         = 4;
+	string topic      = 5;
+	string transform  = 6;//model、raw
+	string protocol   = 7;//mqtt coap ws
+	string supplier   = 8;//供应商
+	bytes  payload    = 9;
+	int64  created    = 10; // Unix timestamp in millisecond
+}
+

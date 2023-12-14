@@ -1,0 +1,24 @@
+IsDebug = true
+
+# 服务启动的
+[Server]
+Address="0.0.0.0"
+GrpcPort = 10004
+
+[Mysql]
+Uri="root:123456@tcp(10.55.132.187:3306)/engine?charset=utf8mb4&parseTime=True&loc=Local"
+MaxConn=100
+MaxIdel=10
+MaxLifeTime=3600
+
+[Nats]
+Url = "nats://10.55.132.187:4223"
+Username = "ruser"
+Password = "T0pS3cr3t"
+
+[TDengine]
+DataSource = "root:taosdata@http(10.55.132.187:6041)/iot?readBufferSize=52428800&loc=Local"
+
+[InnerClient]
+Group="127.0.0.1:10003"
+Thing="127.0.0.1:10002"

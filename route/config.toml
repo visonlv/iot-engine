@@ -1,0 +1,10 @@
+IsDebug = true
+
+# 服务启动的
+[Server]
+Address="0.0.0.0"
+GrpcPort = 10006
+
+[InnerClient]
+Group="127.0.0.1:10003"
+Shadow="127.0.0.1:10004"

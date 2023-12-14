@@ -1,0 +1,1088 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "shadow.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ForwardingService"
+    },
+    {
+      "name": "ShadowService"
+    },
+    {
+      "name": "MsgLogService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/rpc/shadow/ForwardingService.Properties": {
+      "post": {
+        "operationId": "ForwardingService_Properties",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingPropertiesResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingPropertiesReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/ForwardingService.PublishMsg": {
+      "post": {
+        "operationId": "ForwardingService_PublishMsg",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingPublishMsgResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingPublishMsgReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/ForwardingService.Service": {
+      "post": {
+        "operationId": "ForwardingService_Service",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/ForwardingService.ServiceReply": {
+      "post": {
+        "operationId": "ForwardingService_ServiceReply",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceReplyResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceReplyReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/ForwardingService.SetProperties": {
+      "post": {
+        "operationId": "ForwardingService_SetProperties",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertiesResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertiesReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/ForwardingService.SetProperty": {
+      "post": {
+        "operationId": "ForwardingService_SetProperty",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertyResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertyReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/ForwardingService.Watch": {
+      "post": {
+        "operationId": "ForwardingService_Watch",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/protoForwardingWatchResp"
+                }
+              },
+              "title": "Stream result of protoForwardingWatchResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingWatchReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/shadow/MsgLogService.Page": {
+      "post": {
+        "summary": "消息分页",
+        "operationId": "MsgLogService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoMsgLogPageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoMsgLogPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "MsgLogService"
+        ]
+      }
+    },
+    "/rpc/shadow/ShadowService.Add": {
+      "post": {
+        "summary": "影子创建",
+        "operationId": "ShadowService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoShadowAddResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoShadowAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "ShadowService"
+        ]
+      }
+    },
+    "/rpc/shadow/ShadowService.Del": {
+      "post": {
+        "summary": "影子删除",
+        "operationId": "ShadowService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoShadowDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoShadowDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "ShadowService"
+        ]
+      }
+    },
+    "/rpc/shadow/ShadowService.Get": {
+      "post": {
+        "summary": "影子获取",
+        "operationId": "ShadowService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoShadowGetResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoShadowGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "ShadowService"
+        ]
+      }
+    },
+    "/rpc/shadow/ShadowService.List": {
+      "post": {
+        "summary": "影子列表",
+        "operationId": "ShadowService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoShadowListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoShadowListReq"
+            }
+          }
+        ],
+        "tags": [
+          "ShadowService"
+        ]
+      }
+    },
+    "/rpc/shadow/ShadowService.Page": {
+      "post": {
+        "summary": "影子分页",
+        "operationId": "ShadowService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoShadowPageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoShadowPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "ShadowService"
+        ]
+      }
+    },
+    "/rpc/shadow/ShadowService.Update": {
+      "post": {
+        "summary": "影子修改",
+        "operationId": "ShadowService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoShadowUpdateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoShadowUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "ShadowService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "messagingMessage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string"
+        },
+        "pk": {
+          "type": "string"
+        },
+        "sn": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "transform": {
+          "type": "string",
+          "title": "model、raw"
+        },
+        "protocol": {
+          "type": "string",
+          "title": "mqtt coap ws"
+        },
+        "supplier": {
+          "type": "string",
+          "title": "供应商"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        },
+        "created": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp in millisecond"
+        }
+      }
+    },
+    "protoForwardingPropertiesReq": {
+      "type": "object",
+      "properties": {
+        "pks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "sns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        }
+      }
+    },
+    "protoForwardingPropertiesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoForwardingProperty"
+          }
+        }
+      }
+    },
+    "protoForwardingProperty": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "property_map": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protoForwardingPropertyItem"
+          }
+        }
+      }
+    },
+    "protoForwardingPropertyItem": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "protoForwardingPublishMsgReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string"
+        },
+        "msg_type": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "use_topic": {
+          "type": "boolean"
+        },
+        "payload": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingPublishMsgResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingServiceReplyReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "code": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string"
+        }
+      }
+    },
+    "protoForwardingServiceReplyResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    },
+    "protoForwardingServiceReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "code": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingServiceResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingSetPropertiesReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "payload": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingSetPropertiesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingSetPropertyReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "code": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingSetPropertyResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingWatchReq": {
+      "type": "object",
+      "properties": {
+        "context_id": {
+          "type": "string"
+        },
+        "pks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "sns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "msg_types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoMSG_TYPE"
+          }
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        }
+      }
+    },
+    "protoForwardingWatchResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage"
+        }
+      }
+    },
+    "protoMSG_TYPE": {
+      "type": "string",
+      "enum": [
+        "PROPERTY",
+        "PROPERTY_REPLY",
+        "EVENT",
+        "SERVICE",
+        "SERVICE_REPLY"
+      ],
+      "default": "PROPERTY",
+      "description": "- PROPERTY: 属性 影子上报\n - PROPERTY_REPLY: 属性回复 影子回复云端设置属性\n - EVENT: 事件 影子上报\n - SERVICE: 服务 影子调用云端服务\n - SERVICE_REPLY: 服务回复 影子回复云端发起的服务调用",
+      "title": "影子消息类型"
+    },
+    "protoMsgLog": {
+      "type": "object",
+      "properties": {
+        "pk": {
+          "type": "string"
+        },
+        "sn": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "log_type": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64"
+        },
+        "msg_id": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "protoMsgLogPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品Key"
+        },
+        "sn": {
+          "type": "string"
+        },
+        "log_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "msg_id": {
+          "type": "string"
+        },
+        "context_id": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "string"
+        },
+        "start_time": {
+          "type": "string",
+          "format": "int64"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "int64"
+        },
+        "code": {
+          "type": "string"
+        }
+      },
+      "title": "消息分页请求参数"
+    },
+    "protoMsgLogPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoMsgLog"
+          }
+        }
+      },
+      "title": "消息分页返回结果"
+    },
+    "protoShadow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "影子id"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        },
+        "sn": {
+          "type": "string",
+          "title": "影子sn"
+        },
+        "group": {
+          "type": "integer",
+          "format": "int32",
+          "title": "后端生成"
+        },
+        "shadow": {
+          "type": "string",
+          "title": "影子数据"
+        }
+      }
+    },
+    "protoShadowAddReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string",
+          "title": "影子sn"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        }
+      },
+      "title": "影子创建请求参数"
+    },
+    "protoShadowAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "影子创建返回结果"
+    },
+    "protoShadowDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "影子id"
+        }
+      },
+      "title": "影子删除请求参数"
+    },
+    "protoShadowDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "影子删除返回结果"
+    },
+    "protoShadowGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "影子id"
+        }
+      },
+      "title": "影子获取请求参数"
+    },
+    "protoShadowGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoShadow"
+        }
+      },
+      "title": "影子获取返回结果"
+    },
+    "protoShadowListReq": {
+      "type": "object",
+      "properties": {},
+      "title": "影子列表请求参数"
+    },
+    "protoShadowListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoShadow"
+          }
+        }
+      },
+      "title": "影子列表返回结果"
+    },
+    "protoShadowPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        }
+      },
+      "title": "影子分页请求参数"
+    },
+    "protoShadowPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoShadow"
+          }
+        }
+      },
+      "title": "影子分页返回结果"
+    },
+    "protoShadowUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "影子id"
+        }
+      },
+      "title": "影子修改请求参数"
+    },
+    "protoShadowUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "影子修改返回结果"
+    }
+  }
+}

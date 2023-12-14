@@ -1,0 +1,223 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./;proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+// ---------------------------分组管理-----------------------------------
+service CategoryService {
+    // 分类分类
+    rpc Add(CategoryAddReq) returns (CategoryAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.Add"
+            body : "*"
+        };
+    }
+    // 分类删除
+    rpc Del(CategoryDelReq) returns (CategoryDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.Del"
+            body : "*"
+        };
+    }
+    // 分类修改
+    rpc Update(CategoryUpdateReq) returns (CategoryUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.Update"
+            body : "*"
+        };
+    }
+    // 分类获取
+    rpc Get(CategoryGetReq) returns (CategoryGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.Get"
+            body : "*"
+        };
+    }
+    // 分类列表
+    rpc List(CategoryListReq) returns (CategoryListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.List"
+            body : "*"
+        };
+    }
+    // 分类分页
+    rpc Page(CategoryPageReq) returns (CategoryPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.Page"
+            body : "*"
+        };
+    }
+    // 分类节点信息
+    rpc NodeList(CategoryNodeListReq) returns (CategoryNodeListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.NodeList"
+            body : "*"
+        };
+    }
+    // 心跳
+    rpc HeartBeat(stream CategoryHeartBeatReq) returns (stream CategoryHeartBeatResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/config/CategoryService.HeartBeat"
+            body : "*"
+        };
+    }
+   
+}
+
+message Category{
+	// 分类id
+    string id = 1;
+    //分类名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //分类代码
+    string code = 3 [(validate.rules).string.min_len = 1];
+    // 具体内容  {[start end]}
+    string content = 4 [(validate.rules).string.min_len = 1];
+    // 更新时间 毫秒时间戳
+    int64 update_time = 5;
+}
+
+//分类创建请求参数
+message CategoryAddReq {
+    Category item = 1;
+}
+
+//分类创建返回结果
+message CategoryAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//分类删除请求参数
+message CategoryDelReq {
+    //分类id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//分类删除返回结果
+message CategoryDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//分类修改请求参数
+message CategoryUpdateReq {
+    Category item = 1;
+}
+
+//分类修改返回结果
+message CategoryUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//分类获取请求参数
+message CategoryGetReq {
+    //分类id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//分类获取返回结果
+message CategoryGetResp{
+    int32 code = 1;
+    string msg = 2;
+    Category item = 3;
+}
+
+//分类列表请求参数
+message CategoryListReq {
+}
+
+//分类列表返回结果
+message CategoryListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Category items = 4;
+}
+
+
+//分类分页请求参数
+message CategoryPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+}
+
+//分类分页返回结果
+message CategoryPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated Category items = 4;
+}
+
+message CategoryNodeItem{
+    // 配置项标识
+    string index  = 1; 
+    // 开始group 包含 0-99
+    int32 start   = 2; 
+    // 结束group 包含 0-99
+    int32 end     = 3; 
+    // 绑定的ip
+    string ip     = 4; 
+    // 绑定的port
+    string port   = 5; 
+    // 状态 0 未绑定  1 已经绑定
+    int32 status  = 6; 
+}
+
+//分类节点列表请求参数
+message CategoryNodeListReq {
+    //分类代码
+    string code = 1 [(validate.rules).string.min_len = 1];
+}
+
+//分类节点列表返回结果
+message CategoryNodeListResp{
+    int32 code = 1;
+    string msg = 2;
+    //如果版本跟设备不一致，这替换本地缓存
+    int64 last_version = 3;
+	//抢占的节点信息
+	repeated CategoryNodeItem items = 4;
+}
+
+//分类获取或抢占节点请求参数
+message CategoryHeartBeatReq {
+    //注册分类代码 PROXY SHADOW ROUTE 
+    string register_code = 1 [(validate.rules).string.min_len = 1];
+    //订阅分类代码 PROXY SHADOW ROUTE 
+    string subscribe_code = 2 [(validate.rules).string.min_len = 1];
+    //客户端获取配置的最后版本
+    int64 last_version = 3;
+    //客户端ip地址
+    string ip = 4 [(validate.rules).string.min_len = 1];
+    //客户端port
+    string port = 5 [(validate.rules).string.min_len = 1];
+}
+
+//分类获取或抢占节点返回结果
+message CategoryHeartBeatResp{
+    //非0 抢占失败
+    int32 code = 1;
+    string msg = 2;
+    //服务端最新版本
+    int64 last_version = 3;
+    //抢占的节点信息
+	repeated CategoryNodeItem items = 4;
+}

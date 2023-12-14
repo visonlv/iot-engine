@@ -1,0 +1,22 @@
+IsDebug = true
+
+Env = "dev"
+
+# 服务启动的
+[Server]
+Address = "0.0.0.0"
+Port = 10001
+
+# 数据库配置
+[Mysql]
+Uri="root:123456@tcp(10.55.132.187:3306)/engine?charset=utf8mb4&parseTime=True&loc=Local"
+MaxConn=100
+MaxIdel=10
+MaxLifeTime=3600
+
+[Redis]
+Address = "10.55.132.187:6379"
+Password = "1212qwqw"
+Db = 0
+
+[ClientProxy]

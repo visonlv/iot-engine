@@ -1,0 +1,27 @@
+[
+    {
+        "name": "物服务",
+        "url": "/swaggerui/config/thing.swagger.json"
+    },
+    {
+        "name": "权限服务",
+        "url": "/swaggerui/config/auth.swagger.json"
+    },
+    {
+        "name": "分组服务",
+        "url": "/swaggerui/config/group.swagger.json"
+    },
+    {
+        "name": "影子服务",
+        "url": "/swaggerui/config/shadow.swagger.json"
+    },
+    {
+        "name": "路由服务",
+        "url": "/swaggerui/config/route.swagger.json"
+    },
+    {
+        "name": "代理服务",
+        "url": "/swaggerui/config/proxy.swagger.json"
+    }
+
+]

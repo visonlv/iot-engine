@@ -1,0 +1,1612 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "thing.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "DeviceService"
+    },
+    {
+      "name": "ProductService"
+    },
+    {
+      "name": "ProductModelService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/rpc/thing/DeviceService.Add": {
+      "post": {
+        "summary": "设备创建",
+        "operationId": "DeviceService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceAddResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.Auth": {
+      "post": {
+        "summary": "设备鉴权",
+        "operationId": "DeviceService_Auth",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceAuthResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceAuthReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.Del": {
+      "post": {
+        "summary": "设备删除",
+        "operationId": "DeviceService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.Get": {
+      "post": {
+        "summary": "设备获取",
+        "operationId": "DeviceService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceGetResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.List": {
+      "post": {
+        "summary": "设备列表",
+        "operationId": "DeviceService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceListReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.Page": {
+      "post": {
+        "summary": "设备分页",
+        "operationId": "DeviceService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDevicePageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDevicePageReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.Properties": {
+      "post": {
+        "summary": "获取属性值",
+        "operationId": "DeviceService_Properties",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDevicePropertiesResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDevicePropertiesReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/DeviceService.Update": {
+      "post": {
+        "summary": "设备修改",
+        "operationId": "DeviceService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceUpdateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductModelService.Add": {
+      "post": {
+        "summary": "添加物模型",
+        "operationId": "ProductModelService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductModelAddResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductModelAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductModelService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductModelService.Del": {
+      "post": {
+        "summary": "删除物模型",
+        "operationId": "ProductModelService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductModelDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductModelDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductModelService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductModelService.Get": {
+      "post": {
+        "summary": "物模型获取",
+        "operationId": "ProductModelService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductModelGetResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductModelGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductModelService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductModelService.List": {
+      "post": {
+        "summary": "物模型列表",
+        "operationId": "ProductModelService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductModelListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductModelListReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductModelService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductModelService.Page": {
+      "post": {
+        "summary": "物模型分页",
+        "operationId": "ProductModelService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductModelPageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductModelPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductModelService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductModelService.Update": {
+      "post": {
+        "summary": "更新物模型",
+        "operationId": "ProductModelService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductModelUpdateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductModelUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductModelService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.Add": {
+      "post": {
+        "summary": "产品创建",
+        "operationId": "ProductService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductAddResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.Del": {
+      "post": {
+        "summary": "产品删除",
+        "operationId": "ProductService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.Get": {
+      "post": {
+        "summary": "产品获取",
+        "operationId": "ProductService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductGetResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.GetModel": {
+      "post": {
+        "summary": "获取物模型",
+        "operationId": "ProductService_GetModel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductGetModelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductGetModelReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.List": {
+      "post": {
+        "summary": "产品列表",
+        "operationId": "ProductService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductListReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.Page": {
+      "post": {
+        "summary": "产品分页",
+        "operationId": "ProductService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductPageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.Update": {
+      "post": {
+        "summary": "产品修改",
+        "operationId": "ProductService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductUpdateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/rpc/thing/ProductService.UpdateModel": {
+      "post": {
+        "summary": "更新物模型",
+        "operationId": "ProductService_UpdateModel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoProductUpdateModelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoProductUpdateModelReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protoDevice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "设备id"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        },
+        "name": {
+          "type": "string",
+          "title": "设备名称"
+        },
+        "sn": {
+          "type": "string",
+          "title": "设备sn"
+        },
+        "group": {
+          "type": "integer",
+          "format": "int32",
+          "title": "后端生成"
+        },
+        "secret": {
+          "type": "string",
+          "title": "设备秘钥"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        },
+        "online": {
+          "type": "boolean",
+          "title": "是否在线"
+        }
+      }
+    },
+    "protoDeviceAddReq": {
+      "type": "object",
+      "properties": {
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        },
+        "name": {
+          "type": "string",
+          "title": "设备名称"
+        },
+        "sn": {
+          "type": "string",
+          "title": "设备sn"
+        },
+        "secret": {
+          "type": "string",
+          "title": "设备秘钥"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "设备创建请求参数"
+    },
+    "protoDeviceAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "设备创建返回结果"
+    },
+    "protoDeviceAuthReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "supplier": {
+          "type": "string",
+          "title": "供应商  emqx"
+        }
+      },
+      "title": "设备鉴权请求参数"
+    },
+    "protoDeviceAuthResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "is_superuser": {
+          "type": "boolean"
+        }
+      },
+      "title": "设备鉴权返回结果"
+    },
+    "protoDeviceDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "设备id"
+        }
+      },
+      "title": "设备删除请求参数"
+    },
+    "protoDeviceDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "设备删除返回结果"
+    },
+    "protoDeviceGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "设备id"
+        }
+      },
+      "title": "设备获取请求参数"
+    },
+    "protoDeviceGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoDevice"
+        }
+      },
+      "title": "设备获取返回结果"
+    },
+    "protoDeviceListReq": {
+      "type": "object",
+      "properties": {
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        },
+        "name": {
+          "type": "string",
+          "title": "设备名称"
+        },
+        "sn": {
+          "type": "string",
+          "title": "设备sn"
+        }
+      },
+      "title": "设备列表请求参数"
+    },
+    "protoDeviceListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoDevice"
+          }
+        }
+      },
+      "title": "设备列表返回结果"
+    },
+    "protoDevicePageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        },
+        "name": {
+          "type": "string",
+          "title": "设备名称"
+        },
+        "sn": {
+          "type": "string",
+          "title": "设备sn"
+        }
+      },
+      "title": "设备分页请求参数"
+    },
+    "protoDevicePageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoDevice"
+          }
+        }
+      },
+      "title": "设备分页返回结果"
+    },
+    "protoDevicePropertiesReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "获取属性值请求参数"
+    },
+    "protoDevicePropertiesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoDeviceProperty"
+          }
+        }
+      },
+      "title": "获取属性值返回结果"
+    },
+    "protoDeviceProperty": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "protoDeviceUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "设备id"
+        },
+        "name": {
+          "type": "string",
+          "title": "设备名称"
+        },
+        "secret": {
+          "type": "string",
+          "title": "设备秘钥"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "设备修改请求参数"
+    },
+    "protoDeviceUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "设备修改返回结果"
+    },
+    "protoProduct": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "产品id 创建为空"
+        },
+        "name": {
+          "type": "string",
+          "title": "产品名称"
+        },
+        "model": {
+          "type": "string",
+          "title": "产品型号"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品KEY"
+        },
+        "transform": {
+          "type": "string",
+          "title": "传输类型 model 物模型 raw 透传"
+        },
+        "protocol": {
+          "type": "string",
+          "title": "协议 mqtt3 mqtt5 websocket coap"
+        },
+        "type": {
+          "type": "string",
+          "title": "产品类型 direct 直连 gateway 网关 child 子设备"
+        },
+        "thing_def": {
+          "type": "string",
+          "title": "物模型"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        }
+      }
+    },
+    "protoProductAddReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "产品名称"
+        },
+        "model": {
+          "type": "string",
+          "title": "产品型号"
+        },
+        "transform": {
+          "type": "string",
+          "title": "传输类型 model 物模型 raw 透传"
+        },
+        "protocol": {
+          "type": "string",
+          "title": "协议 mqtt3 mqtt5 websocket coap"
+        },
+        "type": {
+          "type": "string",
+          "title": "产品类型 direct 直连 gateway 网关 child 子设备"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "产品创建请求参数"
+    },
+    "protoProductAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "产品创建返回结果"
+    },
+    "protoProductDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "产品id"
+        }
+      },
+      "title": "产品删除请求参数"
+    },
+    "protoProductDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "产品删除返回结果"
+    },
+    "protoProductGetModelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "获取物模型请求参数"
+    },
+    "protoProductGetModelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoProduct"
+        }
+      },
+      "title": "获取物模型返回结果"
+    },
+    "protoProductGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "产品id"
+        },
+        "pk": {
+          "type": "string"
+        }
+      },
+      "title": "产品获取请求参数"
+    },
+    "protoProductGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoProduct"
+        }
+      },
+      "title": "产品获取返回结果"
+    },
+    "protoProductListReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "产品名称"
+        },
+        "model": {
+          "type": "string",
+          "title": "产品型号"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品KEY"
+        },
+        "type": {
+          "type": "string",
+          "title": "产品类型 direct 直连 gateway 网关 child 子设备"
+        },
+        "load_model_def": {
+          "type": "boolean",
+          "title": "是否加载物模型"
+        }
+      },
+      "title": "产品列表请求参数"
+    },
+    "protoProductListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoProduct"
+          }
+        }
+      },
+      "title": "产品列表返回结果"
+    },
+    "protoProductModel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "物模型id 创建为空"
+        },
+        "name": {
+          "type": "string",
+          "title": "物模型名称"
+        },
+        "code": {
+          "type": "string",
+          "title": "物模型标识"
+        },
+        "type": {
+          "type": "string",
+          "title": "定义类型 property event service"
+        },
+        "model_def": {
+          "type": "string",
+          "title": "物模型"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "product_id": {
+          "type": "string",
+          "title": "产品id"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        },
+        "is_sys": {
+          "type": "integer",
+          "format": "int32",
+          "title": "是否系统模型 1 是 0 否"
+        }
+      }
+    },
+    "protoProductModelAddReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "物模型名称"
+        },
+        "code": {
+          "type": "string",
+          "title": "物模型标识"
+        },
+        "type": {
+          "type": "string",
+          "title": "定义类型 property event service"
+        },
+        "model_def": {
+          "type": "string",
+          "title": "物模型"
+        },
+        "product_id": {
+          "type": "string",
+          "title": "产品id"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "物模型创建请求参数"
+    },
+    "protoProductModelAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "物模型创建返回结果"
+    },
+    "protoProductModelDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "物模型id"
+        }
+      },
+      "title": "物模型删除请求参数"
+    },
+    "protoProductModelDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "物模型删除返回结果"
+    },
+    "protoProductModelGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "物模型id"
+        }
+      },
+      "title": "物模型获取请求参数"
+    },
+    "protoProductModelGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoProductModel"
+        }
+      },
+      "title": "物模型获取返回结果"
+    },
+    "protoProductModelListReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "物模型名称"
+        },
+        "code": {
+          "type": "string",
+          "title": "物模型标识"
+        },
+        "type": {
+          "type": "string",
+          "title": "定义类型 property event service"
+        },
+        "product_id": {
+          "type": "string",
+          "title": "产品id"
+        }
+      },
+      "title": "物模型列表请求参数"
+    },
+    "protoProductModelListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoProductModel"
+          }
+        }
+      },
+      "title": "物模型列表返回结果"
+    },
+    "protoProductModelPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "name": {
+          "type": "string",
+          "title": "物模型名称"
+        },
+        "code": {
+          "type": "string",
+          "title": "物模型标识"
+        },
+        "type": {
+          "type": "string",
+          "title": "定义类型 property event service"
+        },
+        "product_id": {
+          "type": "string",
+          "title": "产品id"
+        }
+      },
+      "title": "物模型分页请求参数"
+    },
+    "protoProductModelPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoProductModel"
+          }
+        }
+      },
+      "title": "物模型分页返回结果"
+    },
+    "protoProductModelUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "物模型id 创建为空"
+        },
+        "name": {
+          "type": "string",
+          "title": "物模型名称"
+        },
+        "code": {
+          "type": "string",
+          "title": "物模型标识"
+        },
+        "type": {
+          "type": "string",
+          "title": "定义类型 property event service"
+        },
+        "model_def": {
+          "type": "string",
+          "title": "物模型"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "物模型修改请求参数"
+    },
+    "protoProductModelUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "物模型修改返回结果"
+    },
+    "protoProductPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "name": {
+          "type": "string",
+          "title": "产品名称"
+        },
+        "model": {
+          "type": "string",
+          "title": "产品型号"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品KEY"
+        },
+        "type": {
+          "type": "string",
+          "title": "产品类型 direct 直连 gateway 网关 child 子设备"
+        }
+      },
+      "title": "产品分页请求参数"
+    },
+    "protoProductPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoProduct"
+          }
+        }
+      },
+      "title": "产品分页返回结果"
+    },
+    "protoProductUpdateModelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "thing_def": {
+          "type": "string"
+        }
+      },
+      "title": "获取物模型请求参数"
+    },
+    "protoProductUpdateModelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "thing_def": {
+          "type": "string"
+        }
+      },
+      "title": "获取物模型返回结果"
+    },
+    "protoProductUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "产品id 创建为空"
+        },
+        "name": {
+          "type": "string",
+          "title": "产品名称"
+        },
+        "model": {
+          "type": "string",
+          "title": "产品型号"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "产品修改请求参数"
+    },
+    "protoProductUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "产品修改返回结果"
+    }
+  }
+}

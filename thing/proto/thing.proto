@@ -1,0 +1,660 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./;proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+// ---------------------------设备管理-----------------------------------
+service DeviceService {
+    // 设备创建
+    rpc Add(DeviceAddReq) returns (DeviceAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Add"
+            body : "*"
+        };
+    }
+    // 设备删除
+    rpc Del(DeviceDelReq) returns (DeviceDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Del"
+            body : "*"
+        };
+    }
+    // 设备修改
+    rpc Update(DeviceUpdateReq) returns (DeviceUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Update"
+            body : "*"
+        };
+    }
+    // 设备获取
+    rpc Get(DeviceGetReq) returns (DeviceGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Get"
+            body : "*"
+        };
+    }
+    // 设备列表
+    rpc List(DeviceListReq) returns (DeviceListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.List"
+            body : "*"
+        };
+    }
+    // 设备分页
+    rpc Page(DevicePageReq) returns (DevicePageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Page"
+            body : "*"
+        };
+    }
+    // 设备鉴权
+    rpc Auth(DeviceAuthReq) returns (DeviceAuthResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Auth"
+            body : "*"
+        };
+    }
+    // 获取属性值
+    rpc Properties(DevicePropertiesReq) returns (DevicePropertiesResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.Properties"
+            body : "*"
+        };
+    }
+}
+
+message Device {
+    //设备id
+    string id = 1;
+    //产品pk
+    string pk = 2;
+    //设备名称
+    string name = 3;
+    //设备sn
+    string sn = 4;
+    //后端生成
+    int32 group = 5;
+    //设备秘钥
+    string secret = 6;
+    //描述
+    string desc = 7;
+    //创建时间
+    int64 create_time = 8;
+    //是否在线
+    bool online = 9;
+}
+
+//设备创建请求参数
+message DeviceAddReq {
+    //产品pk
+    string pk = 1 [(validate.rules).string.min_len = 1];
+    //设备名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //设备sn
+    string sn = 3 [(validate.rules).string.min_len = 1];
+    //设备秘钥
+    string secret = 4 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 5;
+}
+
+//设备创建返回结果
+message DeviceAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//设备删除请求参数
+message DeviceDelReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//设备删除返回结果
+message DeviceDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//设备修改请求参数
+message DeviceUpdateReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+    //设备名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //设备秘钥
+    string secret = 3 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 4;
+}
+
+//设备修改返回结果
+message DeviceUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//设备获取请求参数
+message DeviceGetReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//设备获取返回结果
+message DeviceGetResp{
+    int32 code = 1;
+    string msg = 2;
+    Device item = 3;
+}
+
+//设备列表请求参数
+message DeviceListReq {
+    //产品pk
+    string pk = 1;
+    //设备名称
+    string name = 2;
+    //设备sn
+    string sn = 3;
+}
+
+//设备列表返回结果
+message DeviceListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Device items = 3;
+}
+
+//设备分页请求参数
+message DevicePageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //产品pk
+    string pk = 3;
+    //设备名称
+    string name = 4;
+    //设备sn
+    string sn = 5;
+}
+
+//设备分页返回结果
+message DevicePageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated Device items = 4;
+}
+
+//设备鉴权请求参数
+message DeviceAuthReq {
+    string username = 1;
+    string password = 2;
+    string supplier = 3;//供应商  emqx
+}
+
+//设备鉴权返回结果
+message DeviceAuthResp{
+    int32 code = 1;
+    string msg = 2;
+
+    string result = 3;
+    bool is_superuser = 4;
+}
+
+//获取属性值请求参数
+message DevicePropertiesReq {
+    string id = 1 [(validate.rules).string.min_len = 1];
+    repeated string codes = 2;
+}
+
+message DeviceProperty {
+    string code = 1;
+    string name = 2;
+    string desc = 3;
+    string type = 4;
+    string value = 5;
+    int64 update_time = 6;
+}
+
+//获取属性值返回结果
+message DevicePropertiesResp{
+    int32 code = 1;
+    string msg = 2;
+
+    string id = 3;
+    repeated DeviceProperty items = 4;
+}
+// ---------------------------产品管理-----------------------------------
+service ProductService {
+    // 产品创建
+    rpc Add(ProductAddReq) returns (ProductAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.Add"
+            body : "*"
+        };
+    }
+    // 产品删除
+    rpc Del(ProductDelReq) returns (ProductDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.Del"
+            body : "*"
+        };
+    }
+    // 产品修改
+    rpc Update(ProductUpdateReq) returns (ProductUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.Update"
+            body : "*"
+        };
+    }
+    // 产品获取
+    rpc Get(ProductGetReq) returns (ProductGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.Get"
+            body : "*"
+        };
+    }
+    // 产品列表
+    rpc List(ProductListReq) returns (ProductListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.List"
+            body : "*"
+        };
+    }
+    // 产品分页
+    rpc Page(ProductPageReq) returns (ProductPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.Page"
+            body : "*"
+        };
+    }
+    // 获取物模型
+    rpc GetModel(ProductGetModelReq) returns (ProductGetModelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.GetModel"
+            body : "*"
+        };
+    }
+
+    // 更新物模型
+    rpc UpdateModel(ProductUpdateModelReq) returns (ProductUpdateModelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductService.UpdateModel"
+            body : "*"
+        };
+    }
+}
+
+message Product {
+    //产品id 创建为空
+    string id = 1;
+    //产品名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //产品型号
+    string model = 3 [(validate.rules).string.min_len = 1];
+    //产品KEY
+    string pk = 4 [(validate.rules).string.min_len = 1];
+    //传输类型 model 物模型 raw 透传
+    string transform = 5 [(validate.rules).string.min_len = 1];
+    //协议 mqtt3 mqtt5 websocket coap
+    string protocol = 6 [(validate.rules).string.min_len = 1];
+    //产品类型 direct 直连 gateway 网关 child 子设备
+    string type = 7 [(validate.rules).string.min_len = 1];
+    //物模型
+    string thing_def = 8 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 9;
+    //创建时间
+    int64 create_time = 10;
+}
+
+//产品创建请求参数
+message ProductAddReq {
+    //产品名称
+    string name = 1 [(validate.rules).string.min_len = 1];
+    //产品型号
+    string model = 2 [(validate.rules).string.min_len = 1];
+    //传输类型 model 物模型 raw 透传
+    string transform = 3 [(validate.rules).string.min_len = 1];
+    //协议 mqtt3 mqtt5 websocket coap
+    string protocol = 4 [(validate.rules).string.min_len = 1];
+    //产品类型 direct 直连 gateway 网关 child 子设备
+    string type = 5 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 6;
+}
+
+//产品创建返回结果
+message ProductAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//产品删除请求参数
+message ProductDelReq {
+    //产品id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//产品删除返回结果
+message ProductDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//产品修改请求参数
+message ProductUpdateReq {
+    //产品id 创建为空
+    string id = 1;
+    //产品名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //产品型号
+    string model = 3 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 4;
+}
+
+//产品修改返回结果
+message ProductUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//产品获取请求参数
+message ProductGetReq {
+    //产品id
+    string id = 1;
+    string pk = 2;
+}
+
+//产品获取返回结果
+message ProductGetResp{
+    int32 code = 1;
+    string msg = 2;
+    Product item = 3;
+}
+
+//产品列表请求参数
+message ProductListReq {
+    //产品名称
+    string name = 1;
+    //产品型号
+    string model = 2;
+    //产品KEY
+    string pk = 3;
+    //产品类型 direct 直连 gateway 网关 child 子设备
+    string type = 4;
+    //是否加载物模型
+    bool load_model_def = 5;
+}
+
+//产品列表返回结果
+message ProductListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Product items = 3;
+}
+
+//产品分页请求参数
+message ProductPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //产品名称
+    string name = 3;
+    //产品型号
+    string model = 4;
+    //产品KEY
+    string pk = 5;
+    //产品类型 direct 直连 gateway 网关 child 子设备
+    string type = 6;
+}
+
+//产品分页返回结果
+message ProductPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated Product items = 4;
+}
+
+//获取物模型请求参数
+message ProductGetModelReq {
+    string id = 1;
+}
+
+//获取物模型返回结果
+message ProductGetModelResp{
+    int32 code = 1;
+    string msg = 2;
+	Product item = 3;
+}
+
+//获取物模型请求参数
+message ProductUpdateModelReq {
+    string id = 1;
+    string thing_def = 2;
+}
+
+//获取物模型返回结果
+message ProductUpdateModelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+    string thing_def = 4;
+}
+// ---------------------------产品物模型管理-----------------------------------
+service ProductModelService {
+    // 添加物模型
+    rpc Add(ProductModelAddReq) returns (ProductModelAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductModelService.Add"
+            body : "*"
+        };
+    }
+    // 删除物模型
+    rpc Del(ProductModelDelReq) returns (ProductModelDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductModelService.Del"
+            body : "*"
+        };
+    }
+    // 更新物模型
+    rpc Update(ProductModelUpdateReq) returns (ProductModelUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductModelService.Update"
+            body : "*"
+        };
+    }
+    // 物模型获取
+    rpc Get(ProductModelGetReq) returns (ProductModelGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductModelService.Get"
+            body : "*"
+        };
+    }
+    // 物模型列表
+    rpc List(ProductModelListReq) returns (ProductModelListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductModelService.List"
+            body : "*"
+        };
+    }
+    // 物模型分页
+    rpc Page(ProductModelPageReq) returns (ProductModelPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/ProductModelService.Page"
+            body : "*"
+        };
+    }
+}
+
+message ProductModel {
+    //物模型id 创建为空
+    string id = 1;
+    //物模型名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //物模型标识
+    string code = 3 [(validate.rules).string.min_len = 1];
+    //定义类型 property event service
+    string type = 4 [(validate.rules).string.min_len = 1];
+    //物模型
+    string model_def = 5 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 6;
+    //产品id
+    string product_id = 7;
+    //创建时间
+    int64 create_time = 8;
+    //是否系统模型 1 是 0 否
+    int32 is_sys = 9;
+}
+
+//物模型创建请求参数
+message ProductModelAddReq {
+    //物模型名称
+    string name = 1 [(validate.rules).string.min_len = 1];
+    //物模型标识
+    string code = 2 [(validate.rules).string.min_len = 1];
+    //定义类型 property event service
+    string type = 3 [(validate.rules).string.min_len = 1];
+    //物模型
+    string model_def = 4 [(validate.rules).string.min_len = 1];
+    //产品id
+    string product_id = 5;
+    //描述
+    string desc = 6;
+}
+
+//物模型创建返回结果
+message ProductModelAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//物模型删除请求参数
+message ProductModelDelReq {
+    //物模型id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//物模型删除返回结果
+message ProductModelDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//物模型修改请求参数
+message ProductModelUpdateReq {
+    //物模型id 创建为空
+    string id = 1;
+    //物模型名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //物模型标识
+    string code = 3 [(validate.rules).string.min_len = 1];
+    //定义类型 property event service
+    string type = 4 [(validate.rules).string.min_len = 1];
+    //物模型
+    string model_def = 5 [(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 6;
+}
+
+//物模型修改返回结果
+message ProductModelUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//物模型获取请求参数
+message ProductModelGetReq {
+    //物模型id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//物模型获取返回结果
+message ProductModelGetResp{
+    int32 code = 1;
+    string msg = 2;
+    ProductModel item = 3;
+}
+
+//物模型列表请求参数
+message ProductModelListReq {
+    //物模型名称
+    string name = 1;
+    //物模型标识
+    string code = 2;
+    //定义类型 property event service
+    string type = 3;
+    //产品id
+    string product_id = 4;
+}
+
+//物模型列表返回结果
+message ProductModelListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated ProductModel items = 3;
+}
+
+//物模型分页请求参数
+message ProductModelPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //物模型名称
+    string name = 3;
+    //物模型标识
+    string code = 4;
+    //定义类型 property event service
+    string type = 5;
+    //产品id
+    string product_id = 6;
+}
+
+//物模型分页返回结果
+message ProductModelPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated ProductModel items = 4;
+}
+

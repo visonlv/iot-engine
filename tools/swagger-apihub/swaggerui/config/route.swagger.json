@@ -1,0 +1,559 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "route.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ForwardingService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/rpc/route/ForwardingService.Properties": {
+      "post": {
+        "operationId": "ForwardingService_Properties",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingPropertiesResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingPropertiesReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/route/ForwardingService.Service": {
+      "post": {
+        "operationId": "ForwardingService_Service",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/route/ForwardingService.ServiceReply": {
+      "post": {
+        "operationId": "ForwardingService_ServiceReply",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceReplyResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingServiceReplyReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/route/ForwardingService.SetProperties": {
+      "post": {
+        "operationId": "ForwardingService_SetProperties",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertiesResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertiesReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/route/ForwardingService.SetProperty": {
+      "post": {
+        "operationId": "ForwardingService_SetProperty",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertyResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingSetPropertyReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    },
+    "/rpc/route/ForwardingService.Watch": {
+      "post": {
+        "operationId": "ForwardingService_Watch",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/protoForwardingWatchResp"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of protoForwardingWatchResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoForwardingWatchReq"
+            }
+          }
+        ],
+        "tags": [
+          "ForwardingService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "messagingMessage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "contextId": {
+          "type": "string"
+        },
+        "pk": {
+          "type": "string"
+        },
+        "sn": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "transform": {
+          "type": "string",
+          "title": "model、raw"
+        },
+        "protocol": {
+          "type": "string",
+          "title": "mqtt coap ws"
+        },
+        "supplier": {
+          "type": "string",
+          "title": "供应商"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        },
+        "created": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp in millisecond"
+        }
+      }
+    },
+    "messagingUP_MSG_TYPE": {
+      "type": "string",
+      "enum": [
+        "PROPERTY",
+        "PROPERTY_REPLY",
+        "EVENT",
+        "SERVICE",
+        "SERVICE_REPLY"
+      ],
+      "default": "PROPERTY",
+      "description": "- PROPERTY: 属性 影子上报\n - PROPERTY_REPLY: 属性回复 影子回复云端设置属性\n - EVENT: 事件 影子上报\n - SERVICE: 服务 影子调用云端服务\n - SERVICE_REPLY: 服务回复 影子回复云端发起的服务调用",
+      "title": "上行消息类型"
+    },
+    "protoForwardingPropertiesReq": {
+      "type": "object",
+      "properties": {
+        "pks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "sns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        }
+      }
+    },
+    "protoForwardingPropertiesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoForwardingProperty"
+          }
+        }
+      }
+    },
+    "protoForwardingProperty": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "propertyMap": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "protoForwardingServiceReplyReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "contextId": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "code": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "protoForwardingServiceReplyResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    },
+    "protoForwardingServiceReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "contextId": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "code": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingServiceResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingSetPropertiesReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "contextId": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingSetPropertiesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingSetPropertyReq": {
+      "type": "object",
+      "properties": {
+        "sn": {
+          "type": "string"
+        },
+        "contextId": {
+          "type": "string",
+          "title": "空为异步请求"
+        },
+        "code": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32",
+          "title": "毫秒超时"
+        }
+      }
+    },
+    "protoForwardingSetPropertyResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage",
+          "title": "异步请求不返回消息体"
+        }
+      }
+    },
+    "protoForwardingWatchReq": {
+      "type": "object",
+      "properties": {
+        "pks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "sns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        },
+        "msgTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/messagingUP_MSG_TYPE"
+          }
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "空代表所有"
+        }
+      }
+    },
+    "protoForwardingWatchResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "m": {
+          "$ref": "#/definitions/messagingMessage"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

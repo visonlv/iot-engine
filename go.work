@@ -1,0 +1,12 @@
+go 1.20
+
+use (
+	./auth
+	./common
+	./gate
+	./group
+	./proxy
+	./route
+	./shadow
+	./thing
+)

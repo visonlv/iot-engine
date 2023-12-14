@@ -1,0 +1,1252 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./;proto";
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+service AuthService {
+	//登录
+	rpc Login(LoginReq) returns (LoginResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.Login"
+			body: "*"
+			};
+	};
+	//手机号登录
+	rpc LoginByPhone(LoginByPhoneReq) returns (LoginByPhoneResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.LoginByPhone"
+			body: "*"
+			};
+	};
+	//邮箱登录
+	rpc LoginByEmail(LoginByEmailReq) returns (LoginByEmailResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.LoginByEmail"
+			body: "*"
+			};
+	};
+	//登出
+	rpc Logout(LogoutReq) returns (LogoutResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.Logout"
+			body: "*"
+			};
+	};
+	// 获取验证码
+	rpc VerificationCode(VerificationCodeReq) returns (Response) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.VerificationCode"
+			body: "*"
+		};
+	}
+	// 忘记密码
+	rpc ForgetPassword(ForgetPasswordReq) returns (ForgetPasswordResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.ForgetPassword"
+			body: "*"
+		};
+	}
+	// 验证密码
+	rpc VerifyPassword(VerifyPasswordReq) returns (VerifyPasswordResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.VerifyPassword"
+			body: "*"
+		};
+	}
+	//生成token
+	rpc GenToken(GenTokenReq) returns (GenTokenResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.GenToken"
+			body: "*"
+		  };
+	};
+	//检测token
+	rpc Inspect(InspectReq) returns (InspectResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.Inspect"
+			body: "*"
+		  };
+	};
+	//刷新token
+	rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.RefreshToken"
+			body: "*"
+		  };
+	};
+	//删除token
+	rpc DelToken(DelTokenReq) returns (DelTokenResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.DelToken"
+			body: "*"
+			};
+	};
+	//API权限
+	rpc APIPermissions(APIPermissionsReq) returns (APIPermissionsResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AuthService.APIPermissions"
+			body: "*"
+			};
+	};
+}
+//通用请求
+message Request {
+    string id = 1  [(validate.rules).string.min_len = 1];
+}
+
+//通用应答
+message Response {
+    //返回码
+    int32 code = 1;
+    //返回信息
+    string msg = 2;
+}
+
+
+//登录的请求参数
+message LoginReq {
+	//用户名
+	string account = 1 [(validate.rules).string.min_len = 1];
+	//用户密码
+	string password = 2 [(validate.rules).string.min_len = 1];
+	//角色
+	string role_code = 3;
+	//应用code
+	string app_code = 4 [(validate.rules).string.min_len = 1];
+	//账号过期时间，单位：秒(非必填,默认七天)
+	int64 expiry = 5;
+}
+
+//登录的应答参数
+message LoginResp {
+	int32 code =1;
+	string msg = 2;
+	// 用户id
+	string user_id = 3;
+	// 角色标识
+	repeated string role_codes = 4;
+	// token
+	string token = 5;
+}
+
+//手机号登录的请求参数
+message LoginByPhoneReq {
+	//用户手机号
+	string phone = 1 [(validate.rules).string.min_len = 1];
+	//验证码
+	string verify_code = 2 [(validate.rules).string.min_len = 1];
+	//应用code
+	string app_code = 3 [(validate.rules).string.min_len = 1];
+	//角色
+	string role_code = 4;
+	//账号过期时间，单位：秒(非必填,默认七天)
+	int64 expiry = 5;
+}
+
+//手机号登录的应答参数
+message LoginByPhoneResp {
+	int32 code =1;
+	string msg = 2;
+	// 用户id
+	string user_id = 3;
+	// 角色标识
+	repeated string role_codes = 4;
+	// token
+	string token = 5;
+}
+
+//邮箱登录的请求参数
+message LoginByEmailReq {
+	//用户邮箱
+	string email = 1 [(validate.rules).string.min_len = 1];
+	//验证码
+	string Password = 2 [(validate.rules).string.min_len = 1];
+	//应用code
+	string app_code = 3 [(validate.rules).string.min_len = 1];
+	//角色
+	string role_code = 4;
+	//账号过期时间，单位：秒(非必填,默认七天)
+	int64 expiry = 5;
+}
+
+//邮箱登录的应答参数
+message LoginByEmailResp {
+	int32 code =1;
+	string msg = 2;
+	// 用户id
+	string user_id = 3;
+	// 角色标识
+	repeated string role_codes = 4;
+	// token
+	string token = 5;
+}
+
+//登出的请求参数
+message LogoutReq {
+}
+
+//登出的应答参数
+message LogoutResp {
+	int32 code =1;
+	string msg = 2;
+}
+
+//获取验证码的请求参数
+message VerificationCodeReq {
+	//发送对象
+	string object = 1 [(validate.rules).string.min_len = 1];
+	//验证方式 1-手机 2-邮箱
+	int32 method = 2 ;
+	//应用code
+	string app_code = 3 [(validate.rules).string.min_len = 1];
+
+}
+
+// 获取验证码请求参数
+message ForgetPasswordReq{
+	string email = 1[(validate.rules).string.min_len = 1];
+	string verification_code = 2[(validate.rules).string.min_len = 1];
+	string password = 3[(validate.rules).string.min_len = 1];
+  }
+  
+  // 获取验证码返回结果
+  message ForgetPasswordResp{
+	int32 code = 1;
+	string msg = 2;
+  }
+  // 验证密码请求参数
+  message VerifyPasswordReq{
+	string user_id = 1[(validate.rules).string.min_len = 1];
+	string password = 2[(validate.rules).string.min_len = 1];
+  }
+  
+  // 验证密码返回结果
+  message VerifyPasswordResp{
+	int32 code = 1;
+	string msg = 2;
+  }
+//生成token的请求参数
+message GenTokenReq {
+	//用户id
+	string user_id = 1 [(validate.rules).string.min_len = 1];
+	//角色code
+	string role_code = 2 [(validate.rules).string.min_len = 1];
+	//应用标识
+	string app_code = 3 [(validate.rules).string.min_len = 1];
+	//token到期时间，单位：秒(非必填,默认七天)
+	int64 expiry = 4;
+}
+
+//生成token的应答参数
+message GenTokenResp {
+	int32 code =1;
+	string msg = 2;
+	//返回token
+	string token = 3;
+}
+
+//检测token的请求参数
+message InspectReq {
+	//token字符串
+	string token = 1 [(validate.rules).string.min_len = 1];
+}
+//检测token的应答参数
+message InspectResp {
+	int32 code =1;
+	string msg = 2;
+	//应用code
+	string app_code = 3;
+	//是否已存在
+	bool is_exist= 4;
+	//用戶信息
+	User user = 5;
+}
+
+//刷新token的请求参数
+message RefreshTokenReq {
+	string token = 1 [(validate.rules).string.min_len = 1];
+}
+//刷新token的应答参数
+message RefreshTokenResp {
+	int32 code =1;
+	string msg = 2;
+	//token字符串
+	string token = 3;
+}
+
+//删除token的请求参数
+message DelTokenReq {
+	//用户ID
+	string user_id = 1 [(validate.rules).string.min_len = 1];
+	//用户角色
+	string role_code = 2;
+	//应用code
+	string app_code = 3;
+	//token
+	string token = 4;
+}
+//删除token的应答参数
+message DelTokenResp {
+	int32 code = 1;
+	string msg = 2;
+}
+
+//API权限请求参数
+message APIPermissionsReq{
+	//用户ID
+	 string token = 1;
+	 //api地址
+	 string api  = 2 [(validate.rules).string.min_len = 1];
+}
+//API权限应答参数
+message APIPermissionsResp{
+	int32 code = 1;
+	string msg = 2;
+	//权限使能
+	bool enable= 3;
+	//用户id
+	string user_id = 4;
+	//角色标识
+	repeated string role_codes = 5;
+	//应用标识
+	string app_code = 6;
+	//http状态
+	int32 http_status = 7;
+	//是否是白名单
+	bool is_white = 8;
+}
+//----------------------应用管理--------------------------------------------
+//应用服务
+service AppService {
+	//应用分页
+	rpc Page(AppPageReq) returns (AppPageResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/AppService.Page"
+			body: "*"
+			};
+	};
+	//添加应用
+	rpc Add(AppAddReq) returns (AppAddResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/AppService.Add"
+		body: "*"
+		};
+	};
+	//删除应用
+	rpc Del(AppDelReq) returns (AppDelResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/AppService.Del"
+		body: "*"
+		};
+	};
+	//更新应用
+	rpc Update(AppUpdateReq) returns (AppUpdateResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/AppService.Update"
+		body: "*"
+		};
+	};
+	//获取应用
+	rpc Get(AppGetReq) returns (AppGetResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/AppService.Get"
+		body: "*"
+		};
+	};
+}
+message App{
+	//应用ID
+	string id = 1;
+	//应用标识
+	string code = 2;
+	//应用名称
+	string name = 3;
+	//应用描述
+	string describe = 4;
+	//创建人
+	string create_user = 5;
+	//创建人
+	string create_username = 6;
+	//创建时间
+	int64 create_time = 7;
+}
+//应用分页请求参数
+message AppPageReq{
+	//第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+	//应用名称 模糊查询
+	string name = 3;
+}
+//应用分页返回参数
+message AppPageResp{
+	int32 code = 1;
+	string msg = 2;
+	int32 total = 3 ;
+	repeated App list = 4;
+}
+
+//添加应用请求参数
+message AppAddReq{
+	//应用标识
+	string code = 1  [(validate.rules).string.min_len = 1];
+	//应用名称
+	string name = 2  [(validate.rules).string.min_len = 1];
+	//应用描述
+	string describe = 3 ;
+}
+//添加应用应答参数
+message AppAddResp{
+	int32 code =1;
+	string msg = 2;
+	string id = 3;
+}
+
+//删除应用请求参数
+message AppDelReq{
+	//应用id
+	string id = 1 [(validate.rules).string.min_len = 1];
+}
+//删除应用应答参数
+message AppDelResp{
+	int32 code =1;
+	string msg = 2;
+}
+
+//更新应用请求参数
+message AppUpdateReq{
+	//应用id
+	string id = 1 [(validate.rules).string.min_len = 1];
+	//应用名称
+	string name = 2  [(validate.rules).string.min_len = 1];
+	//应用标识
+	string code = 3 [(validate.rules).string.min_len = 1];
+	//应用描述
+	string describe = 4 ;
+}
+//更新应用应答参数
+message AppUpdateResp{
+	int32 code =1;
+	string msg = 2;
+}
+
+//获取应用请求参数
+message AppGetReq{
+	//应用id
+	string id = 1 [(validate.rules).string.min_len = 1];
+}
+//获取应用应答参数
+message AppGetResp{
+	int32 code =1;
+	string msg = 2;
+	App App = 3;
+}
+
+//----------------------角色管理--------------------------------------------
+service RoleService{
+	//应用标识获取角色列表
+	rpc List(RoleListReq) returns (RoleListResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.List"
+		body: "*"
+		};
+	};
+	//角色标识获取角色列表
+	rpc ListByCode(RoleListByCodeReq) returns (RoleListByCodeResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.ListByCode"
+		body: "*"
+		};
+	};
+	//添加角色
+	rpc Add(RoleAddReq) returns (RoleAddResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.Add"
+		body: "*"
+		};
+	};
+	//删除角色
+	rpc Del(RoleDelReq) returns (RoleDelResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.Del"
+		body: "*"
+		};
+	};
+	//更新角色
+	rpc Update(RoleUpdateReq) returns (RoleUpdateResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.Update"
+		body: "*"
+		};
+	};
+	//获取角色
+	rpc Get(RoleGetReq) returns (RoleGetResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.Get"
+		body: "*"
+		};
+	};
+	//角色分页
+	rpc Page(RolePageReq) returns (RolePageResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/RoleService.Page"
+		body: "*"
+		};
+	};
+}
+
+//角色信息
+message Role{
+	//角色ID
+	string id = 1;
+	//角色标识 
+	string code = 2;
+	//角色名称
+	string name = 3;
+	//创建人id
+	string create_user = 4;
+	//创建人
+	string create_username = 5;
+	//创建时间
+	int64 create_time = 6;
+}
+
+//添加角色请求参数
+message RoleAddReq{
+	//角色标识 
+	string code = 1  [(validate.rules).string.min_len = 1];
+	//角色名称
+	string name = 2  [(validate.rules).string.min_len = 1];
+}
+//添加角色应答参数
+message RoleAddResp{
+	int32 code =1;
+	string msg = 2;
+	string id = 3;
+}
+
+//删除角色请求参数
+message RoleDelReq{
+	//角色id
+	string id = 1 [(validate.rules).string.min_len = 1];
+}
+//删除角色应答参数
+message RoleDelResp{
+	int32 code =1;
+	string msg = 2;
+}
+
+//更新角色请求参数
+message RoleUpdateReq{
+	//角色id
+	string id = 1 [(validate.rules).string.min_len = 1];
+	//角色名称
+	string name = 2  [(validate.rules).string.min_len = 1];
+	//角色名称
+	string code = 3  [(validate.rules).string.min_len = 1];
+}
+//更新角色应答参数
+message RoleUpdateResp{
+	int32 code =1;
+	string msg = 2;
+}
+
+//获取角色请求参数
+message RoleGetReq{
+	//角色id
+	string id = 1 [(validate.rules).string.min_len = 1];
+}
+//获取角色应答参数
+message RoleGetResp{
+	int32 code =1;
+	string msg = 2;
+	Role role = 3;
+}
+
+//应用标识获取角色列表请求参数
+message RoleListReq{
+	//应用标识
+	string app_code = 1 [(validate.rules).string.min_len = 1];
+}
+//应用标识获取角色列表应答参数
+message RoleListResp{
+	int32 code =1;
+	string msg = 2;
+	repeated Role items = 3;
+}
+
+//角色标识获取角色列表请求参数
+message RoleListByCodeReq{
+	//应用标识
+	string app_code = 1 [(validate.rules).string.min_len = 1];
+	//角色标识
+	repeated string role_codes = 2;
+}
+//角色标识获取角色列表应答参数
+message RoleListByCodeResp{
+	int32 code =1;
+	string msg = 2;
+	repeated Role items = 3;
+}
+//角色分页请求参数
+message RolePageReq{
+	//第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+	//角色名称 模糊查询
+	string name = 3;
+}
+//角色分页返回参数
+message RolePageResp{
+	int32 code =1;
+	string msg = 2;
+	int32 total = 3 ;
+	repeated Role list = 4;
+}
+//----------------------用户管理--------------------------------------------
+service UserService{
+	//添加用户
+	rpc Add(UserAddReq) returns (UserAddResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/UserService.Add"
+			body: "*"
+		  };
+	};
+	//分页查询用户列表
+	rpc Page(UserPageReq) returns (UserPageResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/UserService.Page"
+			body: "*"
+		};
+	};
+	//SQL语句分页查询用户列表
+	rpc PageBySql(UserPageBySqlReq) returns (UserPageBySqlResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/UserService.PageBySql"
+			body: "*"
+		};
+	};
+	//修改用户
+	rpc Update(UserUpdateReq) returns (UserUpdateResp) {
+	  option (google.api.http) = {
+		post: "/rpc/auth/UserService.Update"
+		body: "*"
+	  };
+	};
+	//删除用户
+	rpc Del(UserDelReq) returns (UserDelResp) {
+	  option (google.api.http) = {
+		post: "/rpc/auth/UserService.Del"
+		body: "*"
+	  };
+	};
+	//用户详情
+	rpc Get(UserGetReq) returns (UserGetResp) {
+	  option (google.api.http) = {
+		post: "/rpc/auth/UserService.Get"
+		body: "*"
+	  };
+	};
+	//更新用户密码
+	rpc UpdatePassword(UpdatePasswordReq) returns (UpdatePasswordResp) {
+		option (google.api.http) = {
+		post: "/rpc/auth/UserService.UpdatePassword"
+		body:"*"
+		};
+	};
+	// 关联用户到角色
+	rpc LinkUserRoles (LinkUserRolesReq) returns (Response)  {
+		option (google.api.http) = {
+		post: "/rpc/auth/UserService.LinkUserRoles"
+		body:"*"
+		};
+	};
+	// 取消关联用户到角色
+	rpc UnlinkUserRoles (UnlinkUserRolesReq) returns (Response) {
+		option (google.api.http) = {
+		post: "/rpc/auth/UserService.UnlinkUserRoles"
+		body:"*"
+		};
+	};
+}
+  
+//用户信息
+message User{
+	//用户id
+	string id =1;  
+	//账号
+	string account=2 ; 
+	//密码
+	string password = 3 ;
+	//昵称
+	string nick_name = 4; 
+	//手机号
+	string phone = 5; 
+	//密码
+	string email = 6 ; 
+	//创建时间
+	int64 create_time = 7;  
+	//创建用户
+	string create_username = 8;
+	//创建用户Id
+	string create_user = 9;  
+	//角色标识
+	repeated string role_code = 10;   
+}
+
+//添加用户请求参数
+message UserAddReq{
+	User item = 1 [(validate.rules).message.required = true];
+	//应用标识
+	string app_code = 2 ;
+}
+
+//添加用户返回结果
+message UserAddResp{
+	int32 code = 1;
+	string msg = 2;
+	string id = 3;  
+}
+
+//分页用户请求参数
+message UserPageReq{
+	//第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+	//排序 
+	string order_key = 3;
+	//排序方式:升序false(默认)|降序true
+	bool desc = 4;
+	//应用code
+	string app_code = 5 ;
+	//账户名
+	string account = 6; 
+	//昵称
+	string nick_name = 7; 
+	//手机号
+	string phone = 8; 
+	//密码
+	string email = 9 ; 
+	//创建人
+	string create_user = 10;
+	//角色
+	repeated string role_codes = 11;
+}
+
+//分页用户返回结果
+message UserPageResp{
+	int32 code = 1;
+	string msg = 2;
+	int32 total = 3;
+	repeated User list=4;
+}
+  
+//分页用户请求参数
+message UserPageBySqlReq{
+	//第几页，从1开始
+	int32 page_index = 1 ;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={ gte: 1}];
+	//排序 
+	string order_key = 3;
+	//排序方式:升序false(默认)|降序true
+	bool desc = 4;
+	//筛选条件 account like %%张%% and user_id in not ("1") 
+	string filter = 5;
+	//应用标识
+	string app_code = 6 [(validate.rules).string.min_len = 1];
+}
+
+//分页用户返回结果
+message UserPageBySqlResp{
+	int32 code = 1;
+	string msg = 2;
+	int32 total = 3;
+	repeated User list=4;
+}
+	  
+
+//更新用户请求参数
+message UserUpdateReq{
+	//用户信息
+	User Item = 1;
+	//应用标识
+	string app_code = 2 ;
+}
+
+//更新用户返回结果
+message UserUpdateResp{
+	int32 code = 1;
+	string msg = 2;
+	string id = 3; 
+}
+
+
+
+//删除用户请求参数
+message UserDelReq{
+	//用户id
+	string id = 1 [(validate.rules).string.min_len = 1];
+	//应用CODE，不为空时清理该用户在该应用下的角色
+	string app_code = 2;
+}
+
+//删除用户返回结果
+message UserDelResp{
+	int32 code = 1;
+	string msg = 2;
+}
+
+//获取用户请求参数
+message UserGetReq{
+	//用户id
+	string id = 1 [(validate.rules).string.min_len = 1];
+	//应用标识
+	string app_code = 2 ;
+}
+
+//获取用户返回结果
+message UserGetResp{
+	int32 code = 1;
+	string msg = 2;
+	User item = 3;
+}
+
+//更新用户密码请求参数
+message UpdatePasswordReq{
+	//用户ID
+	string user_id = 1;
+	//当密码
+	string cur_password = 2; 
+	//新密码
+	string new_password = 3; 
+}
+//更新用户密码返回结果
+message UpdatePasswordResp{
+	int32 code = 1;
+	string msg = 2;
+}
+
+
+//关联用户到角色请求参数
+message LinkUserRolesReq{
+	//用户ID
+	string user_id = 1;
+	//角色标识列表
+	repeated string role_codes = 2; 
+}
+//取消关联用户到角色返回结果
+message UnlinkUserRolesReq{
+	//用户ID
+	string user_id = 1;
+	//角色标识列表
+	repeated string role_codes = 2;
+}
+
+service ResourceService{
+    // 添加资源
+    rpc Add (AddResourceReq) returns (AddResourceResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/ResourceService.Add"
+			body: "*"
+			};
+	};
+    // 更新资源
+    rpc Update (UpdateResourceReq) returns (Response){
+		option (google.api.http) = {
+			post: "/rpc/auth/ResourceService.Update"
+			body: "*"
+			};
+	};
+    // 删除资源
+    rpc Del (Request) returns (Response){
+		option (google.api.http) = {
+			post: "/rpc/auth/ResourceService.Del"
+			body: "*"
+			};
+	};
+    // 资源详情
+    rpc Get (Request) returns (ResourceGetResp){
+		option (google.api.http) = {
+			post: "/rpc/auth/ResourceService.Get"
+			body: "*"
+			};
+	};
+    // 资源列表
+    rpc Page (ResourcePageReq) returns (ResourcePageResp){
+		option (google.api.http) = {
+			post: "/rpc/auth/ResourceService.Page"
+			body: "*"
+			};
+	};
+	// 规则类型
+	rpc RuleType (ResourceRuleTypeReq) returns (ResourceRuleTypeResp){
+		option (google.api.http) = {
+			post: "/rpc/auth/ResourceService.RuleType"
+			body: "*"
+			};
+	};
+}
+//资源信息
+message Resource{
+	//资源ID
+	string id = 1;
+	//资源名称
+	string name = 2;
+	//资源类型  "api"-接口 "menu"-菜单 "rule"-规则
+	string type = 3;
+	//资源内容 
+	string content = 4;
+	//资源属性
+	string property = 5;
+	//父级资源
+	string parent_id = 6;
+	//创建时间
+	int64 create_time = 7;
+	//更新时间
+	int64 update_time = 8;
+}
+
+//添加资源请求参数
+message AddResourceReq {
+    //资源名称
+    string name = 1 [(validate.rules).string.min_len = 1];
+    //资源类型 "api"-接口 "menu"-菜单 "rule"-规则
+    string type = 2 [(validate.rules).string.min_len = 1];
+    //资源内容
+    string content = 3;
+}
+//添加资源返回结果
+message AddResourceResp {
+    //返回码
+    int32 code = 1;
+    //返回信息
+    string msg = 2;
+    //资源ID
+    string id = 3;
+}
+
+//更新资源请求参数
+message UpdateResourceReq {
+   //资源ID
+	string id = 1  [(validate.rules).string.min_len = 1];
+	//资源名称
+	string name = 2 [(validate.rules).string.min_len = 1];
+	//资源内容 
+	string content = 3;
+}
+//获取资源请求参数
+message ResourceGetResp{
+	  //返回码
+	  int32 code = 1;
+	  //返回信息
+	  string msg = 2;
+	 //资源
+	 Resource item = 3;
+}
+
+
+//资源列表请求参数
+message ResourcePageReq{
+	//第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={ gte: 1}];
+	//资源类型  "api"-接口 "menu"-菜单 "rule"-规则
+	string type = 3;
+	//资源名称 模糊查询
+	string name = 4;
+	//资源内容 模糊查询
+	string content = 5;
+}
+
+//资源列表返回结果
+message ResourcePageResp{
+	int32 code = 1;
+	string msg = 2;
+	int32 total = 3;
+	repeated Resource list=4;
+}
+//规则类型请求参数
+message ResourceRuleTypeReq{
+
+}
+//规则类型返回结果
+message ResourceRuleTypeResp{
+	int32 code = 1;
+	string msg = 2;
+	repeated string list = 3;
+}
+//API白名单
+service ApiWhiteListService{
+    // 刷新白名单
+    rpc Refresh (ApiWhiteListRefreshReq) returns (ApiWhiteListRefreshResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/ApiWhiteListService.Refresh"
+			body: "*"
+			};
+	};
+	// 添加白名单
+	rpc Add (ApiWhiteListAddReq) returns (ApiWhiteListAddResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/ApiWhiteListService.Add"
+			body: "*"
+			};
+	};
+	// 编辑白名单
+	rpc Update (ApiWhiteListUpdateReq) returns (ApiWhiteListUpdateResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/ApiWhiteListService.Update"
+			body: "*"
+			};
+	};
+	// 删除白名单
+	rpc Del (ApiWhiteListDelReq) returns (ApiWhiteListDelResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/ApiWhiteListService.Del"
+			body: "*"
+			};
+	};
+	// 分页白名单
+	rpc Page (ApiWhiteListPageReq) returns (ApiWhiteListPageResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/ApiWhiteListService.Page"
+			body: "*"
+			};
+	};
+}
+//报名单
+message ApiWhiteList{
+	//id
+	string id = 1;
+	//接口名称
+	string name = 2;
+	//接口路径
+	string path = 3;
+	//创建时间
+	int64 create_time = 4;
+	//创建人
+	string create_username = 5;
+}
+//刷新白名单请求参数
+message ApiWhiteListRefreshReq{
+
+}
+//刷新白名单返回结果
+message ApiWhiteListRefreshResp{
+	int32 code = 1;
+	string msg = 2;
+}
+
+//添加白名单请求参数
+message ApiWhiteListAddReq{
+	//接口名称
+	string name = 1 [(validate.rules).string.min_len = 1];
+	//接口地址
+	string path = 2 [(validate.rules).string.min_len = 1];
+}
+//添加白名单返回结果
+message ApiWhiteListAddResp{
+	int32 code = 1;
+	string msg = 2;
+	string id = 3;
+}
+//更新白名单请求参数
+message ApiWhiteListUpdateReq{
+	string id = 1 [(validate.rules).string.min_len = 1];
+	//接口名称
+	string name = 2 [(validate.rules).string.min_len = 1];
+	//接口地址
+	string path = 3 [(validate.rules).string.min_len = 1];
+}
+//更新白名单返回结果
+message ApiWhiteListUpdateResp{
+	int32 code = 1;
+	string msg = 2;
+	string id = 3;
+}
+//删除白名单请求参数
+message ApiWhiteListDelReq{
+	string id = 1 [(validate.rules).string.min_len = 1];
+}
+//删除白名单返回结果
+message ApiWhiteListDelResp{
+	int32 code = 1;
+	string msg = 2;
+	string id = 3;
+}
+//分页白名单请求参数
+message ApiWhiteListPageReq{
+	//第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={ gte: 1}];
+	//接口名称
+	string name = 3;
+}
+//分页白名单返回结果
+message ApiWhiteListPageResp{
+	int32 code = 1;
+	string msg = 2;
+	int32 total = 3;
+	repeated ApiWhiteList list = 4;
+}
+//权限管理
+service PermissionService{
+    // 权限分页
+    rpc Page (PermissionPageReq) returns (PermissionPageResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/PermissionService.Page"
+			body: "*"
+			};
+	};
+	// 权限添加
+    rpc Add (PermissionAddReq) returns (PermissionAddResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/PermissionService.Add"
+			body: "*"
+			};
+	};
+	// 权限更新
+	rpc Update (PermissionUpdateReq) returns (PermissionUpdateResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/PermissionService.Update"
+			body: "*"
+			};
+	};
+	// 权限删除
+	rpc Del (PermissionDelReq) returns (PermissionDelResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/PermissionService.Del"
+			body: "*"
+			};
+	};
+	// 权限详情
+	rpc Get (PermissionGetReq) returns (PermissionGetResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/PermissionService.Get"
+			body: "*"
+			};
+	};
+	// 角色对应应用的菜单
+	rpc GetMenu (PermissionGetMenuReq) returns (PermissionGetMenuResp) {
+		option (google.api.http) = {
+			post: "/rpc/auth/PermissionService.GetMenu"
+			body: "*"
+			};
+	};
+}
+//权限信息
+message Permission {
+	string id = 1;
+	//角色id
+	string role_id  = 2;
+	//角色名称
+	string role_name = 3;
+	//应用id
+	string app_id = 4;
+	//应用名称
+	string app_name = 5;
+	//资源类型  "api"-接口 "menu"-菜单 "rule"-规则
+	string resource_type = 6;
+	//资源内容 json格式:[{"resource_id":"1","value":"xxx"}]
+	string resources = 7;
+	//创建时间
+	int64 create_time = 8;
+	//资源展开的json内容
+	string resources_json = 9;
+}
+//权限分页请求参数
+message PermissionPageReq {
+	//第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+	//角色id
+	string role_id = 3;
+	//应用id
+	string app_id = 4;
+}
+//权限分页返回结果
+message PermissionPageResp {
+	int32 code = 1;
+	string msg = 2;
+	int32 total = 3;
+	repeated Permission list = 4;
+}
+//权限添加请求参数
+message PermissionAddReq {
+	//角色id
+	string role_id  = 1 [(validate.rules).string.min_len = 1];
+	//应用id
+	string app_id = 2 ;
+	//资源类型  "api"-接口 "menu"-菜单 "rule"-规则
+	string resource_type = 3 [(validate.rules).string.min_len = 1];
+	//资源内容 json格式:[{"resource_id":"1","value":"xxx"}]
+	string resources = 4;
+}
+//权限添加返回结果
+message PermissionAddResp {
+	int32 code = 1;
+	string msg = 2;
+	//权限id
+	string id = 3;
+}
+//权限更新请求参数
+message PermissionUpdateReq {
+	//权限id
+	string id = 1  [(validate.rules).string.min_len = 1];
+	//角色Id 
+	string role_id = 2 [(validate.rules).string.min_len = 1];
+	//应用id
+	string app_id = 3 ;
+	//资源内容 json格式:[{"resource_id":"1","value":"xxx"}]
+	string resources = 4 ;
+}
+//权限更新返回结果
+message PermissionUpdateResp {
+	int32 code = 1;
+	string msg = 2;
+}
+//权限删除请求参数
+message PermissionDelReq {
+	//权限id
+	string id = 1  [(validate.rules).string.min_len = 1];
+}
+//权限删除返回结果
+message PermissionDelResp {
+	int32 code = 1;
+	string msg = 2;
+}
+//权限详情请求参数
+message PermissionGetReq {
+	//权限id
+	string id = 1  [(validate.rules).string.min_len = 1];
+}
+//权限详情返回结果
+message PermissionGetResp {
+	int32 code = 1;
+	string msg = 2;
+	//权限详情
+	Permission item = 3;
+}
+
+//角色对应应用的菜单请求参数
+message PermissionGetMenuReq {
+	string app_code = 1;
+}
+
+//角色对应应用的菜单返回结果
+message PermissionGetMenuResp {
+	int32 code = 1;
+	string msg = 2;
+	//菜单详情
+	string menu = 3;
+}

@@ -1,0 +1,659 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "config.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/rpc/config/CategoryService.Add": {
+      "post": {
+        "summary": "分类分类",
+        "operationId": "CategoryService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryAddResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.Del": {
+      "post": {
+        "summary": "分类删除",
+        "operationId": "CategoryService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryDelResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.Get": {
+      "post": {
+        "summary": "分类获取",
+        "operationId": "CategoryService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryGetResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.HeartBeat": {
+      "post": {
+        "summary": "心跳",
+        "operationId": "CategoryService_HeartBeat",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/protoCategoryHeartBeatResp"
+                },
+                "error": {
+                  "$ref": "#/definitions/runtimeStreamError"
+                }
+              },
+              "title": "Stream result of protoCategoryHeartBeatResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " (streaming inputs)",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryHeartBeatReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.List": {
+      "post": {
+        "summary": "分类列表",
+        "operationId": "CategoryService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryListResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryListReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.NodeList": {
+      "post": {
+        "summary": "分类节点信息",
+        "operationId": "CategoryService_NodeList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryNodeListResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryNodeListReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.Page": {
+      "post": {
+        "summary": "分类分页",
+        "operationId": "CategoryService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryPageResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/rpc/config/CategoryService.Update": {
+      "post": {
+        "summary": "分类修改",
+        "operationId": "CategoryService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoCategoryUpdateResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoCategoryUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protoCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "分类id"
+        },
+        "name": {
+          "type": "string",
+          "title": "分类名称"
+        },
+        "code": {
+          "type": "string",
+          "title": "分类代码"
+        },
+        "content": {
+          "type": "string",
+          "title": "具体内容  {[start end]}"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "更新时间 毫秒时间戳"
+        }
+      }
+    },
+    "protoCategoryAddReq": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/protoCategory"
+        }
+      },
+      "title": "分类创建请求参数"
+    },
+    "protoCategoryAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "分类创建返回结果"
+    },
+    "protoCategoryDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "分类id"
+        }
+      },
+      "title": "分类删除请求参数"
+    },
+    "protoCategoryDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "分类删除返回结果"
+    },
+    "protoCategoryGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "分类id"
+        }
+      },
+      "title": "分类获取请求参数"
+    },
+    "protoCategoryGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoCategory"
+        }
+      },
+      "title": "分类获取返回结果"
+    },
+    "protoCategoryHeartBeatReq": {
+      "type": "object",
+      "properties": {
+        "register_code": {
+          "type": "string",
+          "title": "注册分类代码 PROXY SHADOW ROUTE"
+        },
+        "subscribe_code": {
+          "type": "string",
+          "title": "订阅分类代码 PROXY SHADOW ROUTE"
+        },
+        "last_version": {
+          "type": "string",
+          "format": "int64",
+          "title": "客户端获取配置的最后版本"
+        },
+        "ip": {
+          "type": "string",
+          "title": "客户端ip地址"
+        },
+        "port": {
+          "type": "string",
+          "title": "客户端port"
+        }
+      },
+      "title": "分类获取或抢占节点请求参数"
+    },
+    "protoCategoryHeartBeatResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "title": "非0 抢占失败"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "last_version": {
+          "type": "string",
+          "format": "int64",
+          "title": "服务端最新版本"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoCategoryNodeItem"
+          },
+          "title": "抢占的节点信息"
+        }
+      },
+      "title": "分类获取或抢占节点返回结果"
+    },
+    "protoCategoryListReq": {
+      "type": "object",
+      "title": "分类列表请求参数"
+    },
+    "protoCategoryListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoCategory"
+          }
+        }
+      },
+      "title": "分类列表返回结果"
+    },
+    "protoCategoryNodeItem": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "string",
+          "title": "配置项标识"
+        },
+        "start": {
+          "type": "integer",
+          "format": "int32",
+          "title": "开始group 包含 0-99"
+        },
+        "end": {
+          "type": "integer",
+          "format": "int32",
+          "title": "结束group 包含 0-99"
+        },
+        "ip": {
+          "type": "string",
+          "title": "绑定的ip"
+        },
+        "port": {
+          "type": "string",
+          "title": "绑定的port"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "title": "状态 0 未绑定  1 已经绑定"
+        }
+      }
+    },
+    "protoCategoryNodeListReq": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "分类代码"
+        }
+      },
+      "title": "分类节点列表请求参数"
+    },
+    "protoCategoryNodeListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "last_version": {
+          "type": "string",
+          "format": "int64",
+          "title": "如果版本跟设备不一致，这替换本地缓存"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoCategoryNodeItem"
+          },
+          "title": "抢占的节点信息"
+        }
+      },
+      "title": "分类节点列表返回结果"
+    },
+    "protoCategoryPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        }
+      },
+      "title": "分类分页请求参数"
+    },
+    "protoCategoryPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoCategory"
+          }
+        }
+      },
+      "title": "分类分页返回结果"
+    },
+    "protoCategoryUpdateReq": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/protoCategory"
+        }
+      },
+      "title": "分类修改请求参数"
+    },
+    "protoCategoryUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "分类修改返回结果"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "runtimeStreamError": {
+      "type": "object",
+      "properties": {
+        "grpc_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "http_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "http_status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

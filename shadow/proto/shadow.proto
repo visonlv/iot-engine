@@ -1,0 +1,397 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./;proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "messaging/messaging.proto";
+
+service ForwardingService {
+    rpc Properties(ForwardingPropertiesReq) returns (ForwardingPropertiesResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.Properties"
+            body : "*"
+        };
+    }
+
+    rpc Service(ForwardingServiceReq) returns (ForwardingServiceResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.Service"
+            body : "*"
+        };
+    }
+
+    rpc SetProperty(ForwardingSetPropertyReq) returns (ForwardingSetPropertyResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.SetProperty"
+            body : "*"
+        };
+    }
+
+    rpc SetProperties(ForwardingSetPropertiesReq) returns (ForwardingSetPropertiesResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.SetProperties"
+            body : "*"
+        };
+    }
+
+    rpc ServiceReply(ForwardingServiceReplyReq) returns (ForwardingServiceReplyResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.ServiceReply"
+            body : "*"
+        };
+    }
+
+    rpc PublishMsg(ForwardingPublishMsgReq) returns (ForwardingPublishMsgResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.PublishMsg"
+            body : "*"
+        };
+    }
+    
+    rpc Watch(ForwardingWatchReq) returns (stream ForwardingWatchResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ForwardingService.Watch"
+            body : "*"
+        };
+    }
+}
+
+message ForwardingPropertiesReq {
+    repeated string pks = 1;//空代表所有
+    repeated string sns = 2 ;//空代表所有
+    repeated string codes = 3;//空代表所有
+}
+
+message ForwardingPropertyItem {
+    string value = 1;
+    int64 update_time = 2;
+}
+
+message ForwardingProperty {
+    string sn = 1;
+    map<string, ForwardingPropertyItem> property_map = 2;
+}
+
+message ForwardingPropertiesResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated ForwardingProperty list = 3;
+}
+
+message ForwardingServiceReq {
+    string sn             = 1 [(validate.rules).string.min_len = 1];
+    // 空为异步请求
+	string context_id     = 2;
+	string code           = 3 [(validate.rules).string.min_len = 1];
+	string payload         = 4;
+    int32 timeout         = 5;//毫秒超时
+}
+
+message ForwardingServiceResp{
+    int32 code = 1;
+    string msg = 2;
+    // 异步请求不返回消息体
+    messaging.Message m = 3;
+}
+
+message ForwardingSetPropertyReq {
+    string sn             = 1 [(validate.rules).string.min_len = 1];
+    // 空为异步请求
+	string context_id     = 2;
+	string code           = 3 [(validate.rules).string.min_len = 1];
+	string payload         = 4;
+    int32 timeout         = 5;//毫秒超时
+}
+
+message ForwardingSetPropertyResp{
+    int32 code = 1;
+    string msg = 2;
+    // 异步请求不返回消息体
+    messaging.Message m = 3;
+}
+
+message ForwardingSetPropertiesReq {
+    string sn             = 1 [(validate.rules).string.min_len = 1];
+    // 空为异步请求
+	string context_id     = 2;
+	string payload         = 3;
+    int32 timeout         = 4;//毫秒超时
+}
+
+message ForwardingSetPropertiesResp{
+    int32 code = 1;
+    string msg = 2;
+    // 异步请求不返回消息体
+    messaging.Message m = 3;
+}
+
+message ForwardingServiceReplyReq {
+    string sn             = 1 [(validate.rules).string.min_len = 1];
+    // 空为异步请求
+	string context_id     = 2 [(validate.rules).string.min_len = 1];
+	string code           = 3 [(validate.rules).string.min_len = 1];
+	string payload         = 4;
+}
+
+message ForwardingServiceReplyResp{
+    int32 code = 1;
+    string msg = 2;
+}
+
+message ForwardingPublishMsgReq {
+    string sn             = 1;
+	string context_id     = 2;
+    string msg_type       = 3;
+	string code           = 4;
+	string topic          = 5;
+	bool use_topic        = 6;
+	string payload        = 7;
+    int32 timeout         = 8;//毫秒超时
+}
+
+message ForwardingPublishMsgResp{
+    int32 code = 1;
+    string msg = 2;
+    // 异步请求不返回消息体
+    messaging.Message m = 3;
+}
+
+//影子消息类型
+enum MSG_TYPE {
+    //属性 影子上报
+    PROPERTY = 0;
+    //属性回复 影子回复云端设置属性
+    PROPERTY_REPLY = 1;
+    //事件 影子上报
+    EVENT = 2;
+    //服务 影子调用云端服务
+    SERVICE = 3;
+    //服务回复 影子回复云端发起的服务调用
+    SERVICE_REPLY = 4;
+}
+
+message ForwardingWatchReq {
+    string context_id   = 1 [(validate.rules).string.min_len = 1];
+    repeated string pks = 2;//空代表所有
+    repeated string sns = 3 ;//空代表所有
+    repeated MSG_TYPE msg_types = 4;
+    repeated string codes = 5;//空代表所有
+}
+
+message ForwardingWatchResp{
+    int32 code = 1;
+    string msg = 2;
+    messaging.Message m = 3;
+}
+
+// ---------------------------影子管理-----------------------------------
+service ShadowService {
+    // 影子创建
+    rpc Add(ShadowAddReq) returns (ShadowAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ShadowService.Add"
+            body : "*"
+        };
+    }
+    // 影子删除
+    rpc Del(ShadowDelReq) returns (ShadowDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ShadowService.Del"
+            body : "*"
+        };
+    }
+    // 影子修改
+    rpc Update(ShadowUpdateReq) returns (ShadowUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ShadowService.Update"
+            body : "*"
+        };
+    }
+    // 影子获取
+    rpc Get(ShadowGetReq) returns (ShadowGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ShadowService.Get"
+            body : "*"
+        };
+    }
+    // 影子列表
+    rpc List(ShadowListReq) returns (ShadowListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ShadowService.List"
+            body : "*"
+        };
+    }
+    // 影子分页
+    rpc Page(ShadowPageReq) returns (ShadowPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/ShadowService.Page"
+            body : "*"
+        };
+    }
+}
+
+message Shadow {
+    //影子id
+    string id = 1;
+    //产品pk
+    string pk = 2;
+    //影子sn
+    string sn = 3;
+    //后端生成
+    int32 group = 4;
+    //影子数据
+    string shadow = 5;
+}
+
+//影子创建请求参数
+message ShadowAddReq {
+    //影子sn
+    string sn = 1 [(validate.rules).string.min_len = 1];
+    //产品pk
+    string pk = 2 [(validate.rules).string.min_len = 1];
+}
+
+//影子创建返回结果
+message ShadowAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//影子删除请求参数
+message ShadowDelReq {
+    //影子id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//影子删除返回结果
+message ShadowDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//影子修改请求参数
+message ShadowUpdateReq {
+    //影子id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//影子修改返回结果
+message ShadowUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//影子获取请求参数
+message ShadowGetReq {
+    //影子id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//影子获取返回结果
+message ShadowGetResp{
+    int32 code = 1;
+    string msg = 2;
+    Shadow item = 3;
+}
+
+//影子列表请求参数
+message ShadowListReq {
+}
+
+//影子列表返回结果
+message ShadowListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Shadow items = 3;
+}
+
+//影子分页请求参数
+message ShadowPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+}
+
+//影子分页返回结果
+message ShadowPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated Shadow items = 4;
+}
+
+
+
+
+// ---------------------------消息日志-----------------------------------
+service MsgLogService {
+    // 消息分页
+    rpc Page(MsgLogPageReq) returns (MsgLogPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/shadow/MsgLogService.Page"
+            body : "*"
+        };
+    }
+}
+
+message MsgLog {
+    string pk = 1;
+    string sn = 2;
+    string content = 3;
+    string topic = 4;
+    string log_type = 5;
+    string dir = 6;
+    int64 create_time = 7;
+    string msg_id = 8;
+    string context_id = 9;
+    string result = 10;
+    string code = 11;
+}
+
+//消息分页请求参数
+message MsgLogPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //产品Key
+    string pk = 3;
+    string sn = 4;
+    repeated string log_types = 5;
+    repeated string topics = 6;
+    string msg_id = 7;
+    string context_id = 8;
+    string dir = 9;
+    int64 start_time = 10;
+    int64 end_time = 11;
+    string code = 12;
+}
+
+//消息分页返回结果
+message MsgLogPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated MsgLog items = 4;
+}
+

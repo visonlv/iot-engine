@@ -1,0 +1,18 @@
+IsDebug = true
+
+# 服务启动的
+[Server]
+Address = "0.0.0.0"
+HttpPort = 8080
+GrpcProxyPort = 10000
+
+[InnerClient]
+Auth = "127.0.0.1:10001"
+
+[Business]
+    TargetList = [
+        ["auth:10000","127.0.0.1:10001"],
+        ["group:10000","127.0.0.1:10003"],
+        ["shadow:10000","127.0.0.1:10004"],
+        ["thing:10000","127.0.0.1:10002"]]
+

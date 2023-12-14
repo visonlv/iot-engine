@@ -1,0 +1,28 @@
+IsDebug = true
+
+# 服务启动的
+[Server]
+Address="0.0.0.0"
+GrpcPort = 10005
+
+[Nats]
+Url = "nats://10.55.132.187:4223"
+Username = "ruser"
+Password = "T0pS3cr3t"
+
+[Emqx]
+Url = "10.55.132.187:1883"
+Username = "admin"
+Password = "1212qwwq"
+Timeout = 5000
+
+[Http]
+Address="0.0.0.0"
+Port = 8081
+
+[Coap]
+Address="0.0.0.0"
+Port = 8082
+
+[InnerClient]
+Group="127.0.0.1:10003"
