@@ -55,7 +55,7 @@ func (d *EventHandler) handlePropertyMsg(msgType, code string, msg *messaging.Me
 	}
 
 	// 批量属性判断
-	if code != define.MsgCodeBatch {
+	if code != define.MsgCodePropertyBatch {
 		if len(info.Params) != 1 {
 			return nil, fmt.Errorf("model single property:%s must one property set", code)
 		}
@@ -421,7 +421,7 @@ func (d *EventHandler) handleDownPropertyMsg(msgType, code string, msg *messagin
 	}
 
 	// 批量属性判断
-	if code != define.MsgCodeBatch {
+	if code != define.MsgCodePropertyBatch {
 		if len(info.Params) != 1 {
 			return nil, fmt.Errorf("model single property:%s must one property set", code)
 		}
@@ -459,4 +459,35 @@ func (d *EventHandler) decodeDownMsg(msgType, code string, msg *messaging.Messag
 		return d.handleDownServiceReplyMsg(msgType, code, msg, product, device) // 服务调用回复 上行记录
 	}
 	return nil, fmt.Errorf("not support msgType:%s", msgType)
+}
+
+func (d *EventHandler) decodeGatewayUpMsg(msgType, code string, msg *messaging.Message) (*DecodeResult, error) {
+	info := &define.GateWayUpPayload{}
+	err := json.Unmarshal(msg.Payload, info)
+	if err != nil {
+		return nil, err
+	}
+	err = info.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	if info.SubMsgs != nil {
+		for _, v := range info.SubMsgs {
+			err = v.Validate()
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	//检查参数属性
+	decodeResult := &DecodeResult{
+		NatsMsg:             msg,
+		PayloadResult:       info,
+		PayloadCommonResult: info.CommonPayload,
+		MsgType:             msgType,
+	}
+
+	return decodeResult, nil
 }

@@ -2196,6 +2196,17 @@ func (m *ShadowAddReq) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		err := ShadowAddReqValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetSn()) < 1 {
 		err := ShadowAddReqValidationError{
 			field:  "Sn",
@@ -2217,6 +2228,10 @@ func (m *ShadowAddReq) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for PSn
+
+	// no validation rules for PId
 
 	if len(errors) > 0 {
 		return ShadowAddReqMultiError(errors)
@@ -2649,6 +2664,32 @@ func (m *ShadowUpdateReq) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	if utf8.RuneCountInString(m.GetSn()) < 1 {
+		err := ShadowUpdateReqValidationError{
+			field:  "Sn",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPk()) < 1 {
+		err := ShadowUpdateReqValidationError{
+			field:  "Pk",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for PSn
+
+	// no validation rules for PId
 
 	if len(errors) > 0 {
 		return ShadowUpdateReqMultiError(errors)

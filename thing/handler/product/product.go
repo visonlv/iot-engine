@@ -2,6 +2,7 @@ package product
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/visonlv/go-vkit/logger"
 	"github.com/visonlv/go-vkit/utilsx"
@@ -11,6 +12,33 @@ import (
 	pb "github.com/visonlv/iot-engine/thing/proto"
 	"google.golang.org/protobuf/proto"
 )
+
+func GetProductByPksAsMap(pkMap map[string]string) (map[string]*model.ProductModel, error) {
+	if len(pkMap) == 0 {
+		return make(map[string]*model.ProductModel), nil
+	}
+
+	pks := make([]string, 0)
+	for _, v := range pkMap {
+		pks = append(pks, v)
+	}
+
+	list, err := model.ProductGetInPks(nil, pks)
+	if err != nil {
+		return nil, err
+	}
+
+	resultMap := make(map[string]*model.ProductModel)
+	for _, v := range list {
+		resultMap[v.Pk] = v
+	}
+
+	if len(pks) != len(resultMap) {
+		return nil, fmt.Errorf("产品查询结果跟入参数量不一致 入参:%d 结果:%d", len(pks), len(resultMap))
+	}
+
+	return resultMap, nil
+}
 
 func InitAllProduct() {
 	list, err := model.ProductList(nil, "", "", "", "")

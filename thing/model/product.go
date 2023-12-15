@@ -116,3 +116,8 @@ func ProductExistByPk(tx *mysqlx.MysqlClient, pk string) (bool, error) {
 	result := getTx(tx).Model(product_model).Where("pk = ? AND is_delete = ?", pk, 0).Count(&c)
 	return c > 0, result.GetDB().Error
 }
+
+func ProductGetInPks(tx *mysqlx.MysqlClient, pks []string) (list []*ProductModel, err error) {
+	err = getTx(tx).Model(product_model).Where("pk in ? and is_delete = ?", pks, 0).FindList(&list)
+	return
+}

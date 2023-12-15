@@ -262,10 +262,16 @@ message Shadow {
 
 //影子创建请求参数
 message ShadowAddReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
     //影子sn
-    string sn = 1 [(validate.rules).string.min_len = 1];
+    string sn = 2 [(validate.rules).string.min_len = 1];
     //产品pk
-    string pk = 2 [(validate.rules).string.min_len = 1];
+    string pk = 3[(validate.rules).string.min_len = 1];
+    //父设备sn
+    string p_sn = 4;
+    //父设备id
+    string p_id = 5;
 }
 
 //影子创建返回结果
@@ -290,8 +296,16 @@ message ShadowDelResp{
 
 //影子修改请求参数
 message ShadowUpdateReq {
-    //影子id
+    //设备id
     string id = 1 [(validate.rules).string.min_len = 1];
+    //影子sn
+    string sn = 2 [(validate.rules).string.min_len = 1];
+    //产品pk
+    string pk = 3[(validate.rules).string.min_len = 1];
+    //父设备sn
+    string p_sn = 4;
+    //父设备id
+    string p_id = 5;
 }
 
 //影子修改返回结果

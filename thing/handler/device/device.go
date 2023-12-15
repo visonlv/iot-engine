@@ -6,9 +6,40 @@ import (
 
 	shadowpb "github.com/visonlv/iot-engine/shadow/proto"
 	"github.com/visonlv/iot-engine/thing/app"
+	"github.com/visonlv/iot-engine/thing/model"
 )
 
+func GetDeviceByIdsAsMap(idMap map[string]string) (map[string]*model.DeviceModel, error) {
+	if len(idMap) == 0 {
+		return make(map[string]*model.DeviceModel), nil
+	}
+
+	sns := make([]string, 0)
+	for _, v := range idMap {
+		sns = append(sns, v)
+	}
+
+	list, err := model.DeviceGetInIds(nil, sns)
+	if err != nil {
+		return nil, err
+	}
+
+	resultMap := make(map[string]*model.DeviceModel)
+	for _, v := range list {
+		resultMap[v.Id] = v
+	}
+
+	if len(idMap) != len(resultMap) {
+		return nil, fmt.Errorf("设备查询结果跟入参数量不一致 入参:%d 结果:%d", len(idMap), len(resultMap))
+	}
+
+	return resultMap, nil
+}
+
 func GetDevicesProperties(sns []string, codes []string) (map[string]map[string]*shadowpb.ForwardingPropertyItem, error) {
+	if len(sns) == 0 {
+		return make(map[string]map[string]*shadowpb.ForwardingPropertyItem), nil
+	}
 	newResp, err := app.Client.ForwardingService.Properties(context.Background(), &shadowpb.ForwardingPropertiesReq{
 		Sns:         sns,
 		Codes:       codes,

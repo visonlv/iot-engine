@@ -285,7 +285,7 @@ func (the *ForwardingService) SetProperty(ctx context.Context, req *pb.Forwardin
 }
 
 func (the *ForwardingService) SetProperties(ctx context.Context, req *pb.ForwardingSetPropertiesReq, resp *pb.ForwardingSetPropertiesResp) error {
-	code := define.MsgCodeBatch
+	code := define.MsgCodePropertyBatch
 	msg, err := forwarding.CommonSendMsg(ctx, &forwarding.SendMsgReq{
 		Sn:        req.Sn,
 		ContextId: req.ContextId,

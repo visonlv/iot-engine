@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/visonlv/go-vkit/mysqlx"
-	"github.com/visonlv/go-vkit/utilsx"
 	"gorm.io/gorm"
 )
 
@@ -22,6 +21,7 @@ type DeviceModel struct {
 	IsDelete   int       `gorm:"type:tinyint;not null;default:0;comment:删除状态 0正常 1删除"`
 
 	Pk     string `gorm:"type:varchar(64);comment:产品pk"`
+	PId    string `gorm:"type:varchar(64);comment:网关id"`
 	Name   string `gorm:"type:varchar(64);comment:设备名称"`
 	Sn     string `gorm:"type:varchar(64);comment:设备Sn"`
 	Group  int32  `gorm:"type:int(11);comment:分组标识"`
@@ -30,7 +30,6 @@ type DeviceModel struct {
 }
 
 func (a *DeviceModel) BeforeCreate(tx *gorm.DB) error {
-	a.Id = utilsx.GenUuid()
 	return nil
 }
 
@@ -66,7 +65,7 @@ func DeviceUpdate(tx *mysqlx.MysqlClient, m *DeviceModel) error {
 	return getTx(tx).UpdateEx(m)
 }
 
-func DevicePage(tx *mysqlx.MysqlClient, pageIndex int32, pageSize int32, pk, name, sn string) ([]*DeviceModel, int32, error) {
+func DevicePage(tx *mysqlx.MysqlClient, pageIndex int32, pageSize int32, pk, name, sn, pId string) ([]*DeviceModel, int32, error) {
 	items := []*DeviceModel{}
 	var total int32
 	query := getTx(tx).Model(device_model).Where("is_delete = ?", 0)
@@ -79,11 +78,14 @@ func DevicePage(tx *mysqlx.MysqlClient, pageIndex int32, pageSize int32, pk, nam
 	if sn != "" {
 		query = query.Where("sn = ?", sn)
 	}
+	if pId != "" {
+		query = query.Where("p_id = ?", pId)
+	}
 	err := query.Order("created_at desc").FindPage(pageIndex, pageSize, &items, &total)
 	return items, total, err
 }
 
-func DeviceList(tx *mysqlx.MysqlClient, pk, name, sn string) (list []*DeviceModel, err error) {
+func DeviceList(tx *mysqlx.MysqlClient, pk, name, sn, pId string) (list []*DeviceModel, err error) {
 	query := getTx(tx).Model(device_model).Where("is_delete = ?", 0)
 	if name != "" {
 		query = query.Where("name like ?", "%"+name+"%")
@@ -94,7 +96,9 @@ func DeviceList(tx *mysqlx.MysqlClient, pk, name, sn string) (list []*DeviceMode
 	if sn != "" {
 		query = query.Where("sn = ?", sn)
 	}
-
+	if pId != "" {
+		query = query.Where("p_id = ?", pId)
+	}
 	err = query.FindList(&list)
 	return
 }
@@ -102,5 +106,15 @@ func DeviceList(tx *mysqlx.MysqlClient, pk, name, sn string) (list []*DeviceMode
 func DeviceCountByPk(tx *mysqlx.MysqlClient, pk string) (count int64, err error) {
 	result := getTx(tx).Model(device_model).Where("pk = ? AND is_delete = ?", pk, 0).Count(&count)
 	err = result.GetDB().Error
+	return
+}
+
+func DeviceGetInIds(tx *mysqlx.MysqlClient, ids []string) (list []*DeviceModel, err error) {
+	err = getTx(tx).Model(device_model).Where("id in ? and is_delete = ?", ids, 0).FindList(&list)
+	return
+}
+
+func DeviceGetByProductType(tx *mysqlx.MysqlClient, productType string) (list []*DeviceModel, err error) {
+	err = getTx(tx).Model(device_model).Where("is_delete = 0 and pk in(select pk from t_product where is_delete = 0 and type = ?)", productType).FindList(&list)
 	return
 }

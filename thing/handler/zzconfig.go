@@ -46,6 +46,11 @@ func GetApiEndpoint() []*grpcx.ApiEndpoint {
 			ClientStream:false, 
 			ServerStream:false,
 		},{
+			Method:"DeviceService.ListGateway",
+			Url:"/rpc/thing/DeviceService.ListGateway", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
 			Method:"DeviceService.Page",
 			Url:"/rpc/thing/DeviceService.Page", 
 			ClientStream:false, 

@@ -10,14 +10,17 @@ import (
 
 	"github.com/spf13/cast"
 	"github.com/visonlv/go-vkit/errorsx"
+	"github.com/visonlv/go-vkit/logger"
 	"github.com/visonlv/go-vkit/utilsx"
 	"github.com/visonlv/iot-engine/common/define"
 	"github.com/visonlv/iot-engine/common/utils"
 	shadowpb "github.com/visonlv/iot-engine/shadow/proto"
 	"github.com/visonlv/iot-engine/thing/app"
 	"github.com/visonlv/iot-engine/thing/handler/device"
+	"github.com/visonlv/iot-engine/thing/handler/product"
 	"github.com/visonlv/iot-engine/thing/model"
 	pb "github.com/visonlv/iot-engine/thing/proto"
+	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 )
 
@@ -37,16 +40,61 @@ func (the *DeviceService) Add(ctx context.Context, req *pb.DeviceAddReq, resp *p
 		return nil
 	}
 
-	_, err = model.ProductGetByPk(nil, req.Pk)
+	p, err := model.ProductGetByPk(nil, req.Pk)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = fmt.Sprintf("获取产品信息失败:%s", err.Error())
 		return nil
 	}
 
+	var PSn string
+	//子设备
+	if p.Type == string(define.ProductTypeChild) {
+		if req.PId == "" {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = "子设备必须指定网关设备"
+			return nil
+		}
+
+		pd, err := model.DeviceGet(nil, req.PId)
+		if err != nil {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = fmt.Sprintf("获取网关设备信息失败:%s", err.Error())
+			return nil
+		}
+		PSn = pd.Sn
+
+		pp, err := model.ProductGetByPk(nil, pd.Pk)
+		if err != nil {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = fmt.Sprintf("获取网关产品信息失败:%s", err.Error())
+			return nil
+		}
+
+		if pp.Type != string(define.ProductTypeGateway) {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = fmt.Sprintf("指定的网关设备不是网关产品:%s", pp.Type)
+			return nil
+		}
+	}
+
+	m := &model.DeviceModel{
+		Id:     utilsx.GenUuid(),
+		Pk:     req.Pk,
+		Name:   req.Name,
+		Sn:     req.Sn,
+		PId:    req.PId,
+		Group:  utils.GetGroupId(req.Sn),
+		Secret: req.Secret,
+		Desc:   req.Desc,
+	}
+
 	newResp, err := app.Client.ShadowService.Add(context.Background(), &shadowpb.ShadowAddReq{
-		Pk: req.Pk,
-		Sn: req.Sn,
+		Id:  m.Id,
+		Sn:  req.Sn,
+		Pk:  req.Pk,
+		PSn: PSn,
+		PId: req.PId,
 	})
 
 	if err != nil {
@@ -60,21 +108,24 @@ func (the *DeviceService) Add(ctx context.Context, req *pb.DeviceAddReq, resp *p
 		resp.Msg = fmt.Sprintf("创建影子失败:%d %s", newResp.Code, newResp.Msg)
 		return nil
 	}
-	m := &model.DeviceModel{
-		Pk:     req.Pk,
-		Name:   req.Name,
-		Sn:     req.Sn,
-		Group:  utils.GetGroupId(req.Sn),
-		Secret: req.Secret,
-		Desc:   req.Desc,
-	}
-	err = model.DeviceAdd(nil, m)
 
+	err = model.DeviceAdd(nil, m)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = fmt.Sprintf("添加设备失败:%s", err.Error())
 		return nil
 	}
+
+	pbDevice := &pb.Device{}
+	utilsx.DeepCopy(m, pbDevice)
+	cc, _ := proto.Marshal(pbDevice)
+	err = app.Nats.Publish(define.SysTopicDeviceAdd, cc)
+	if err != nil {
+		logger.Errorf("设备添加 sn:%s 发送nats失败 %s", pbDevice.Sn, err.Error())
+	} else {
+		logger.Infof("设备添加 sn:%s 发送nats成功", pbDevice.Sn)
+	}
+
 	resp.Id = m.Id
 	return nil
 }
@@ -87,12 +138,38 @@ func (the *DeviceService) Del(ctx context.Context, req *pb.DeviceDelReq, resp *p
 		return nil
 	}
 
+	newResp, err := app.Client.ShadowService.Del(context.Background(), &shadowpb.ShadowDelReq{
+		Id: m.Id,
+	})
+
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("删除影子失败:%s", err.Error())
+		return nil
+	}
+
+	if newResp.Code != 0 {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("删除影子失败:%d %s", newResp.Code, newResp.Msg)
+		return nil
+	}
+
 	m.IsDelete = 1
 	err = model.DeviceUpdate(nil, m)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = fmt.Sprintf("删除设备失败:%s", err.Error())
 		return nil
+	}
+
+	pbDevice := &pb.Device{}
+	utilsx.DeepCopy(m, pbDevice)
+	cc, _ := proto.Marshal(pbDevice)
+	err = app.Nats.Publish(define.SysTopicDeviceDel, cc)
+	if err != nil {
+		logger.Errorf("设备删除 sn:%s 发送nats失败 %s", pbDevice.Sn, err.Error())
+	} else {
+		logger.Infof("设备删除 sn:%s 发送nats成功", pbDevice.Sn)
 	}
 
 	resp.Id = req.Id
@@ -107,15 +184,85 @@ func (the *DeviceService) Update(ctx context.Context, req *pb.DeviceUpdateReq, r
 		return nil
 	}
 
+	p, err := model.ProductGetByPk(nil, m.Pk)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("获取产品信息失败:%s", err.Error())
+		return nil
+	}
+
+	var PSn string
+	//子设备
+	if p.Type == string(define.ProductTypeChild) {
+		if req.PId == "" {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = "子设备必须指定网关设备"
+			return nil
+		}
+
+		pd, err := model.DeviceGet(nil, req.PId)
+		if err != nil {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = fmt.Sprintf("获取网关设备信息失败:%s", err.Error())
+			return nil
+		}
+		PSn = pd.Sn
+
+		pp, err := model.ProductGetByPk(nil, pd.Pk)
+		if err != nil {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = fmt.Sprintf("获取网关产品信息失败:%s", err.Error())
+			return nil
+		}
+
+		if pp.Type != string(define.ProductTypeGateway) {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = fmt.Sprintf("指定的网关设备不是网关产品:%s", pp.Type)
+			return nil
+		}
+	}
+
+	newResp, err := app.Client.ShadowService.Update(context.Background(), &shadowpb.ShadowUpdateReq{
+		Id:  m.Id,
+		Sn:  m.Sn,
+		Pk:  m.Pk,
+		PSn: PSn,
+		PId: req.PId,
+	})
+
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("更新影子失败:%s", err.Error())
+		return nil
+	}
+
+	if newResp.Code != 0 {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("更新影子失败:%d %s", newResp.Code, newResp.Msg)
+		return nil
+	}
+
 	m.Name = req.Name
 	m.Secret = req.Secret
 	m.Desc = req.Desc
+	m.PId = req.PId
 	err = model.DeviceUpdate(nil, m)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = fmt.Sprintf("修改设备失败:%s", err.Error())
 		return nil
 	}
+
+	pbDevice := &pb.Device{}
+	utilsx.DeepCopy(m, pbDevice)
+	cc, _ := proto.Marshal(pbDevice)
+	err = app.Nats.Publish(define.SysTopicDeviceUpdate, cc)
+	if err != nil {
+		logger.Errorf("设备更新 sn:%s 发送nats失败 %s", pbDevice.Sn, err.Error())
+	} else {
+		logger.Infof("设备更新 sn:%s 发送nats成功", pbDevice.Sn)
+	}
+
 	resp.Id = m.Id
 	return nil
 }
@@ -128,18 +275,66 @@ func (the *DeviceService) Get(ctx context.Context, req *pb.DeviceGetReq, resp *p
 		return nil
 	}
 
+	var pName string
+	if m.PId != "" {
+		idMap := make(map[string]string)
+		idMap[m.PId] = m.PId
+		resultMap, err := device.GetDeviceByIdsAsMap(idMap)
+		if err != nil {
+			resp.Code = errorsx.FAIL.Code
+			resp.Msg = err.Error()
+			return nil
+		}
+		pName = resultMap[m.PId].Name
+	}
+
+	pkMap := make(map[string]string)
+	pkMap[m.Pk] = m.Pk
+	resultPkMap, err := product.GetProductByPksAsMap(pkMap)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = err.Error()
+		return nil
+	}
+
 	itemRet := &pb.Device{}
 	utilsx.DeepCopy(m, itemRet)
 	itemRet.CreateTime = m.CreatedAt.UnixMilli()
+	itemRet.PName = pName
+	itemRet.ProductName = resultPkMap[m.Pk].Name
+	itemRet.ProductType = resultPkMap[m.Pk].Type
 	resp.Item = itemRet
 	return nil
 }
 
 func (the *DeviceService) List(ctx context.Context, req *pb.DeviceListReq, resp *pb.DeviceListResp) error {
-	list, err := model.DeviceList(nil, req.Pk, req.Name, req.Sn)
+	list, err := model.DeviceList(nil, req.Pk, req.Name, req.Sn, req.PId)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = fmt.Sprintf("获取列表失败:%s", err.Error())
+		return nil
+	}
+
+	idMap := make(map[string]string)
+	pkMap := make(map[string]string)
+	for _, m := range list {
+		pkMap[m.Pk] = m.Pk
+		if m.PId != "" {
+			idMap[m.PId] = m.PId
+		}
+	}
+
+	resultMap, err := device.GetDeviceByIdsAsMap(idMap)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = err.Error()
+		return nil
+	}
+
+	resultPkMap, err := product.GetProductByPksAsMap(pkMap)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = err.Error()
 		return nil
 	}
 
@@ -148,6 +343,11 @@ func (the *DeviceService) List(ctx context.Context, req *pb.DeviceListReq, resp 
 		itemRet := &pb.Device{}
 		utilsx.DeepCopy(m, itemRet)
 		itemRet.CreateTime = m.CreatedAt.UnixMilli()
+		if pm, ok := resultMap[m.PId]; ok {
+			itemRet.PName = pm.Name
+		}
+		itemRet.ProductName = resultPkMap[m.Pk].Name
+		itemRet.ProductType = resultPkMap[m.Pk].Type
 		listRet = append(listRet, itemRet)
 	}
 	resp.Items = listRet
@@ -155,7 +355,7 @@ func (the *DeviceService) List(ctx context.Context, req *pb.DeviceListReq, resp 
 }
 
 func (the *DeviceService) Page(ctx context.Context, req *pb.DevicePageReq, resp *pb.DevicePageResp) error {
-	list, total, err := model.DevicePage(nil, req.PageIndex, req.PageSize, req.Pk, req.Name, req.Sn)
+	list, total, err := model.DevicePage(nil, req.PageIndex, req.PageSize, req.Pk, req.Name, req.Sn, req.PId)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = fmt.Sprintf("获取分页失败:%s", err.Error())
@@ -163,8 +363,28 @@ func (the *DeviceService) Page(ctx context.Context, req *pb.DevicePageReq, resp 
 	}
 
 	deviceSns := make([]string, 0)
+	idMap := make(map[string]string)
+	pkMap := make(map[string]string)
 	for _, m := range list {
 		deviceSns = append(deviceSns, m.Sn)
+		pkMap[m.Pk] = m.Pk
+		if m.PId != "" {
+			idMap[m.PId] = m.PId
+		}
+	}
+
+	resultMap, err := device.GetDeviceByIdsAsMap(idMap)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = err.Error()
+		return nil
+	}
+
+	resultPkMap, err := product.GetProductByPksAsMap(pkMap)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = err.Error()
+		return nil
 	}
 
 	sn2property, err := device.GetDevicesProperty(deviceSns, define.PropertyOnline)
@@ -181,6 +401,12 @@ func (the *DeviceService) Page(ctx context.Context, req *pb.DevicePageReq, resp 
 		if p, ok := sn2property[m.Sn]; ok {
 			itemRet.Online = p.Value == "true"
 		}
+		if pm, ok := resultMap[m.PId]; ok {
+			itemRet.PName = pm.Name
+		}
+		itemRet.ProductName = resultPkMap[m.Pk].Name
+		itemRet.ProductType = resultPkMap[m.Pk].Type
+
 		listRet = append(listRet, itemRet)
 	}
 
@@ -275,5 +501,24 @@ func (the *DeviceService) Properties(ctx context.Context, req *pb.DeviceProperti
 
 	resp.Id = req.Id
 	resp.Items = newList
+	return nil
+}
+
+func (the *DeviceService) ListGateway(ctx context.Context, req *pb.DeviceListGatewayReq, resp *pb.DeviceListGatewayResp) error {
+	list, err := model.DeviceGetByProductType(nil, string(define.ProductTypeGateway))
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("获取设备列表失败:%s", err.Error())
+		return nil
+	}
+	listRet := make([]*pb.Device, 0)
+	for _, m := range list {
+		itemRet := &pb.Device{}
+		utilsx.DeepCopy(m, itemRet)
+		itemRet.CreateTime = m.CreatedAt.UnixMilli()
+		listRet = append(listRet, itemRet)
+	}
+
+	resp.Items = listRet
 	return nil
 }

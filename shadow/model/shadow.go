@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/visonlv/go-vkit/mysqlx"
-	"github.com/visonlv/go-vkit/utilsx"
 	"gorm.io/gorm"
 )
 
@@ -22,6 +21,7 @@ type ShadowModel struct {
 	IsDelete   int       `gorm:"type:tinyint;not null;default:0;comment:删除状态 0正常 1删除"`
 
 	Sn          string `gorm:"type:varchar(64);comment:设备sn"`
+	PSn         string `gorm:"type:varchar(64);comment:父设备sn"`
 	Group       int32  `gorm:"type:int(11);comment:分组标识"`
 	Pk          string `gorm:"type:varchar(64);comment:产品KEY"`
 	Shadow      string `gorm:"type:text;comment:影子信息"`
@@ -29,7 +29,6 @@ type ShadowModel struct {
 }
 
 func (a *ShadowModel) BeforeCreate(tx *gorm.DB) error {
-	a.Id = utilsx.GenUuid()
 	return nil
 }
 
@@ -92,6 +91,11 @@ func ShadowListInSn(tx *mysqlx.MysqlClient, sns []string) (list []*ShadowModel, 
 }
 
 func ShadowUpdateBySnAndShadowAndVersion(tx *mysqlx.MysqlClient, sn, shadow string, version int64) error {
-	result := getTx(tx).Model(shadow_model).Where("sn = ?", sn).Update("shadow", shadow).Update("last_version", version)
+	result := getTx(tx).Model(shadow_model).Where("is_delete = ? AND sn = ?", 0, sn).Update("shadow", shadow).Update("last_version", version)
+	return result.GetDB().Error
+}
+
+func ShadowUpdateByIdAndPsn(tx *mysqlx.MysqlClient, id, pSn string) error {
+	result := getTx(tx).Model(shadow_model).Where("is_delete = ? AND id = ?", 0, id).Update("p_sn", pSn)
 	return result.GetDB().Error
 }

@@ -920,6 +920,10 @@
     "protoShadowAddReq": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string",
+          "title": "设备id"
+        },
         "sn": {
           "type": "string",
           "title": "影子sn"
@@ -927,6 +931,14 @@
         "pk": {
           "type": "string",
           "title": "产品pk"
+        },
+        "p_sn": {
+          "type": "string",
+          "title": "父设备sn"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
         }
       },
       "title": "影子创建请求参数"
@@ -1069,7 +1081,23 @@
       "properties": {
         "id": {
           "type": "string",
-          "title": "影子id"
+          "title": "设备id"
+        },
+        "sn": {
+          "type": "string",
+          "title": "影子sn"
+        },
+        "pk": {
+          "type": "string",
+          "title": "产品pk"
+        },
+        "p_sn": {
+          "type": "string",
+          "title": "父设备sn"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
         }
       },
       "title": "影子修改请求参数"

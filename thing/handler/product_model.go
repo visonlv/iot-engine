@@ -34,6 +34,12 @@ func (the *ProductModelService) Add(ctx context.Context, req *pb.ProductModelAdd
 		return nil
 	}
 
+	if define.IsSysModelCode(req.Code) {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("%s 为物模型关键词，不可添加", req.Code)
+		return nil
+	}
+
 	object, err := define.ParseModelItem(req.Name, req.Code, define.ModelType(req.Type), req.ModelDef)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
@@ -152,6 +158,12 @@ func (the *ProductModelService) Update(ctx context.Context, req *pb.ProductModel
 	if p.Transform != string(define.TransformModel) {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = "该产品不支持物模型"
+		return nil
+	}
+
+	if define.IsSysModelCode(req.Code) {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("%s 为物模型关键词，不可使用", req.Code)
 		return nil
 	}
 

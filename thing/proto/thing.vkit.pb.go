@@ -66,6 +66,15 @@ func (c *DeviceServiceClient) List(ctx context.Context, in *DeviceListReq, opts 
 	return out, nil
 }
 
+func (c *DeviceServiceClient) ListGateway(ctx context.Context, in *DeviceListGatewayReq, opts ...grpc.CallOption) (*DeviceListGatewayResp, error) {
+	out := new(DeviceListGatewayResp)
+	err := c.cc.Invoke(ctx, c.name, "DeviceService.ListGateway", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *DeviceServiceClient) Page(ctx context.Context, in *DevicePageReq, opts ...grpc.CallOption) (*DevicePageResp, error) {
 	out := new(DevicePageResp)
 	err := c.cc.Invoke(ctx, c.name, "DeviceService.Page", in, out, opts...)

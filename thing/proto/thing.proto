@@ -48,6 +48,14 @@ service DeviceService {
             body : "*"
         };
     }
+    // 网关设备列表
+    rpc ListGateway(DeviceListGatewayReq) returns (DeviceListGatewayResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/DeviceService.ListGateway"
+            body : "*"
+        };
+    }
     // 设备分页
     rpc Page(DevicePageReq) returns (DevicePageResp)
     {
@@ -93,6 +101,14 @@ message Device {
     int64 create_time = 8;
     //是否在线
     bool online = 9;
+    //父设备id
+    string p_id = 10;
+    //父设备名称
+    string p_name = 11;
+    //产品类型
+    string product_type = 12;
+    //产品类型
+    string product_name = 13;
 }
 
 //设备创建请求参数
@@ -105,8 +121,10 @@ message DeviceAddReq {
     string sn = 3 [(validate.rules).string.min_len = 1];
     //设备秘钥
     string secret = 4 [(validate.rules).string.min_len = 1];
+    //父设备id
+    string p_id = 5;
     //描述
-    string desc = 5;
+    string desc = 6;
 }
 
 //设备创建返回结果
@@ -139,6 +157,8 @@ message DeviceUpdateReq {
     string secret = 3 [(validate.rules).string.min_len = 1];
     //描述
     string desc = 4;
+    //父设备id
+    string p_id = 5;
 }
 
 //设备修改返回结果
@@ -169,10 +189,24 @@ message DeviceListReq {
     string name = 2;
     //设备sn
     string sn = 3;
+    //父设备id
+    string p_id = 4;
 }
 
 //设备列表返回结果
 message DeviceListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Device items = 3;
+}
+
+
+//网关设备列表请求参数
+message DeviceListGatewayReq {
+}
+
+//网关设备列表返回结果
+message DeviceListGatewayResp{
     int32 code = 1;
     string msg = 2;
     repeated Device items = 3;
@@ -190,6 +224,8 @@ message DevicePageReq {
     string name = 4;
     //设备sn
     string sn = 5;
+    //父设备id
+    string p_id = 6;
 }
 
 //设备分页返回结果

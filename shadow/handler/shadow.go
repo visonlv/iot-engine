@@ -22,7 +22,9 @@ type ShadowService struct {
 func (the *ShadowService) Add(ctx context.Context, req *pb.ShadowAddReq, resp *pb.ShadowAddResp) error {
 	bb, _ := json.Marshal(define.DefaultShadow())
 	m := &model.ShadowModel{
+		Id:          req.Id,
 		Sn:          req.Sn,
+		PSn:         req.PSn,
 		Group:       utils.GetGroupId(req.Sn),
 		Pk:          req.Pk,
 		Shadow:      string(bb),
@@ -39,10 +41,31 @@ func (the *ShadowService) Add(ctx context.Context, req *pb.ShadowAddReq, resp *p
 }
 
 func (the *ShadowService) Del(ctx context.Context, req *pb.ShadowDelReq, resp *pb.ShadowDelResp) error {
+	err := model.ShadowDel(nil, req.Id)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("删除影子失败 %s", err.Error())
+		return nil
+	}
+	resp.Id = req.Id
 	return nil
 }
 
 func (the *ShadowService) Update(ctx context.Context, req *pb.ShadowUpdateReq, resp *pb.ShadowUpdateResp) error {
+	_, err := model.ShadowGet(nil, req.Id)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("获取影子失败 %s", err.Error())
+		return nil
+	}
+
+	err = model.ShadowUpdateByIdAndPsn(nil, req.Id, req.PSn)
+	if err != nil {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = fmt.Sprintf("更新影子失败 %s", err.Error())
+		return nil
+	}
+	resp.Id = req.Id
 	return nil
 }
 

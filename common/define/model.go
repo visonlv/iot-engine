@@ -265,6 +265,10 @@ func IsThingDefValid(thingDef string) (*ThingInfo, error) {
 			return nil, fmt.Errorf("property code should set")
 		}
 
+		if IsSysModelCode(v.Code) {
+			return nil, fmt.Errorf("%s 为物模型关键词，不可使用", v.Code)
+		}
+
 		if v.Name == "" {
 			return nil, fmt.Errorf("property code:%s name should set", v.Code)
 		}
@@ -286,6 +290,10 @@ func IsThingDefValid(thingDef string) (*ThingInfo, error) {
 		enterCode[v.Code] = v.Code
 		if v.Code == "" {
 			return nil, fmt.Errorf("service code should set")
+		}
+
+		if IsSysModelCode(v.Code) {
+			return nil, fmt.Errorf("%s 为物模型关键词，不可使用", v.Code)
 		}
 
 		if v.Name == "" {
@@ -327,6 +335,10 @@ func IsThingDefValid(thingDef string) (*ThingInfo, error) {
 		enterCode[v.Code] = v.Code
 		if v.Code == "" {
 			return nil, fmt.Errorf("event code should set")
+		}
+
+		if IsSysModelCode(v.Code) {
+			return nil, fmt.Errorf("%s 为物模型关键词，不可使用", v.Code)
 		}
 
 		if v.Name == "" {

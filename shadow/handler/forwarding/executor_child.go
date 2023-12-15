@@ -16,6 +16,7 @@ import (
 	commonnats "github.com/visonlv/iot-engine/common/client/nats"
 	"github.com/visonlv/iot-engine/common/define"
 	"github.com/visonlv/iot-engine/common/proto/messaging"
+	"github.com/visonlv/iot-engine/common/utils"
 	"github.com/visonlv/iot-engine/shadow/app"
 	"github.com/visonlv/iot-engine/shadow/model"
 	pb "github.com/visonlv/iot-engine/shadow/proto"
@@ -355,7 +356,7 @@ func (s *executorChild) ayncAddSimpleEvent(eventType int, param interface{}) {
 	s.asyncAddEvent(event)
 }
 
-func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
+func (s *executorChild) asynSendChildMsg(msg *SendMsgReq) error {
 	dInfo, pInfo, err := s.devices.getDeviceAndProduct(msg.Sn)
 	if err != nil {
 		return err
@@ -418,6 +419,112 @@ func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
 	return err1
 }
 
+func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
+	dInfo, pInfo, err := s.devices.getDeviceAndProduct(msg.Sn)
+	if err != nil {
+		return err
+	}
+
+	directPublish := dInfo.PSn == ""
+	// 需要通过网关转发
+	if !directPublish {
+		dInfoGateway, _, err := s.devices.getDeviceAndProduct(dInfo.PSn)
+		if err != nil {
+			return err
+		}
+
+		if !dInfoGateway.Shadow.PropertyEqualTo(define.PropertyOnline, true) {
+			err = fmt.Errorf("网关不在线")
+		}
+		// 重新构造网关数据
+		sourcePayload := make(map[string]any)
+		err = json.Unmarshal(msg.Payload, &sourcePayload)
+		if err != nil {
+			err = fmt.Errorf("不是标准json格式", err.Error())
+		}
+
+		if err == nil {
+			sourcePayload["identify"] = msg.Code
+			newPayload := &define.GateWayDownPayload{}
+			newPayload.Id = utilsx.GenUuid()
+			newPayload.ContextId = utilsx.GenUuid()
+			newPayload.Time = time.Now().UnixMilli()
+			newPayload.SubMsgs = make([]*define.GateWayDownChileMsg, 0)
+			newPayload.SubMsgs = append(newPayload.SubMsgs, &define.GateWayDownChileMsg{
+				Sn:  msg.Sn,
+				Msg: sourcePayload,
+			})
+			newPayloadbb, _ := json.Marshal(newPayload)
+			newMsg := &SendMsgReq{
+				Sn:        dInfo.PSn,
+				ContextId: utilsx.GenUuid(),
+				Code:      define.MsgCodeGatewayProxy,
+				MsgType:   msg.MsgType,
+				Payload:   newPayloadbb,
+				Timeout:   msg.Timeout,
+			}
+			return s.asynSendMsg(newMsg)
+		}
+
+	}
+
+	//1、判断设备是否在线
+	if err != nil && !dInfo.Shadow.PropertyEqualTo(define.PropertyOnline, true) {
+		err = fmt.Errorf("设备不在线")
+	}
+
+	// 消息格式
+	topic := fmt.Sprintf("iot.down.%d.%s.%s.%s.%s", dInfo.Group, pInfo.Pk, dInfo.Sn, msg.MsgType, msg.Code)
+	m := &messaging.Message{
+		Id:        utilsx.GenUuid(),
+		ContextId: msg.ContextId,
+		Pk:        pInfo.Pk,
+		Sn:        dInfo.Sn,
+		Topic:     topic,
+		Transform: string(pInfo.Transform),
+		Protocol:  string(pInfo.Protocol),
+		Supplier:  "iot-engine",
+		Payload:   msg.Payload,
+		Created:   time.Now().UnixMilli(),
+	}
+
+	if err == nil && !directPublish {
+		_, err = s.eventHandler.decodeDownMsg(msg.MsgType, msg.Code, m, pInfo, dInfo)
+		if err != nil {
+			err = fmt.Errorf("[forwarding] decodeDownMsg decode msg fail:%s", err.Error())
+		}
+	}
+
+	if err == nil && directPublish {
+		err = s.natsClient.Publish(context.Background(), topic, m)
+	}
+
+	result := "{}"
+	if err != nil {
+		result = fmt.Sprintf("{\"code\":-1,\"msg\":\"%s\"}", err.Error())
+	}
+
+	err1 := model.MsgLogInsert(context.Background(), &model.MsgLog{
+		Pk:        m.Pk,
+		Sn:        m.Sn,
+		Content:   string(m.Payload),
+		Topic:     strings.ReplaceAll(m.Topic, ".", "/"),
+		LogType:   msg.MsgType,
+		Ts:        time.Now(),
+		MsgId:     m.Id,
+		ContextId: m.ContextId,
+		Result:    result,
+		Dir:       string(define.ServiceDirDown),
+		Code:      msg.Code,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return err1
+}
+
 func (s *executorChild) syncSendMsg(req *synSendMsgEventReq, outCh chan *ChanEvent) error {
 	msg := req.msg
 	err := s.asynSendMsg(msg)
@@ -444,18 +551,27 @@ func (s *executorChild) handlerNatsMsg(msg *messaging.Message) {
 		return
 	}
 
-	dInfo, _, err := s.devices.getDeviceAndProduct(msg.Sn)
+	logger.Infof("[forwarding] handlerNatsMsg topic:%s decode result pk:%v sn:%v group:%v msgType:%v code:%v isUp:%v", msg.Topic, pk, sn, group, msgType, code, isUp)
+
+	dInfo, product, err := s.devices.getDeviceAndProduct(msg.Sn)
 	if err != nil {
 		logger.Infof("[forwarding] handlerNatsMsg getDevice fail:%s err:%s", msg.Topic, err.Error())
 		return
 	}
 
-	logger.Infof("[forwarding] handlerNatsMsg topic:%s decode result pk:%v sn:%v group:%v msgType:%v code:%v isUp:%v", msg.Topic, pk, sn, group, msgType, code, isUp)
-	product, err := s.products.GetProduct(msg.Pk)
-	if err != nil {
-		logger.Errorf("[forwarding] handlerNatsMsg product pk:%s not exist", msg.Pk)
+	// 网关代理信息特殊处理
+	if code == define.MsgCodeGatewayProxy {
+		decodeResult, err := s.eventHandler.decodeGatewayUpMsg(msgType, code, msg)
+		if err != nil {
+			logger.Errorf("[forwarding] handlerNatsMsg decode msg fail:%s", err.Error())
+			return
+		}
+		//批量转发
+		s.tryPublishChildMsg(decodeResult)
+		s.trySaveLog(decodeResult, code)
 		return
 	}
+
 	decodeResult, err := s.eventHandler.decodeUpMsg(msgType, code, msg, product, dInfo)
 	if err != nil {
 		logger.Errorf("[forwarding] handlerNatsMsg decode msg fail:%s", err.Error())
@@ -562,6 +678,44 @@ func (s *executorChild) tryHandlerWatchEvent(result *DecodeResult) {
 			logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s blook", s.ExecutorChildIndex, v.contextId)
 			v.out <- e
 		}
+	}
+}
+
+func (s *executorChild) tryPublishChildMsg(result *DecodeResult) {
+	info := result.PayloadResult.(*define.GateWayUpPayload)
+	if info.SubMsgs != nil && len(info.SubMsgs) > 0 {
+		for _, v := range info.SubMsgs {
+			dInfo, pInfo, err := s.devices.getDeviceAndProduct(v.Sn)
+			if err != nil {
+				logger.Infof("[forwarding] tryPublishChildMsg getDeviceAndProduct sn:%s msg:%s err:%s", v.Sn, utils.JsonToString(v), err.Error())
+				continue
+			}
+
+			if v.Sn != result.NatsMsg.Sn {
+				logger.Infof("[forwarding] tryPublishChildMsg 设备sn:%s 不是 网关sn:%s 子设备 msg:%s", v.Sn, result.NatsMsg.Sn, utils.JsonToString(v))
+			}
+
+			topic := fmt.Sprintf("iot.up.%d.%s.%s.%s.%s", dInfo.Group, pInfo.Pk, dInfo.Sn, result.MsgType, v.Msg.Identify)
+			payload, _ := json.Marshal(v.Msg)
+			m := &messaging.Message{
+				Id:        v.Msg.Id,
+				ContextId: v.Msg.ContextId,
+				Pk:        pInfo.Pk,
+				Sn:        dInfo.Sn,
+				Topic:     topic,
+				Transform: result.NatsMsg.Transform,
+				Protocol:  result.NatsMsg.Protocol,
+				Supplier:  "gateway",
+				Payload:   payload,
+				Created:   time.Now().UnixMilli(),
+			}
+			err = s.natsClient.Publish(context.Background(), topic, m)
+			if err != nil {
+				logger.Infof("[forwarding] tryPublishChildMsg Publish sn:%s msg:%s err:%s", v.Sn, utils.JsonToString(v), err.Error())
+				continue
+			}
+		}
+
 	}
 }
 

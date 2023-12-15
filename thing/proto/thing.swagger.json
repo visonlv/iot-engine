@@ -157,6 +157,33 @@
         ]
       }
     },
+    "/rpc/thing/DeviceService.ListGateway": {
+      "post": {
+        "summary": "网关设备列表",
+        "operationId": "DeviceService_ListGateway",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoDeviceListGatewayResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoDeviceListGatewayReq"
+            }
+          }
+        ],
+        "tags": [
+          "DeviceService"
+        ]
+      }
+    },
     "/rpc/thing/DeviceService.Page": {
       "post": {
         "summary": "设备分页",
@@ -658,6 +685,22 @@
         "online": {
           "type": "boolean",
           "title": "是否在线"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
+        },
+        "p_name": {
+          "type": "string",
+          "title": "父设备名称"
+        },
+        "product_type": {
+          "type": "string",
+          "title": "产品类型"
+        },
+        "product_name": {
+          "type": "string",
+          "title": "产品类型"
         }
       }
     },
@@ -679,6 +722,10 @@
         "secret": {
           "type": "string",
           "title": "设备秘钥"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
         },
         "desc": {
           "type": "string",
@@ -790,6 +837,31 @@
       },
       "title": "设备获取返回结果"
     },
+    "protoDeviceListGatewayReq": {
+      "type": "object",
+      "properties": {},
+      "title": "网关设备列表请求参数"
+    },
+    "protoDeviceListGatewayResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoDevice"
+          }
+        }
+      },
+      "title": "网关设备列表返回结果"
+    },
     "protoDeviceListReq": {
       "type": "object",
       "properties": {
@@ -804,6 +876,10 @@
         "sn": {
           "type": "string",
           "title": "设备sn"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
         }
       },
       "title": "设备列表请求参数"
@@ -852,6 +928,10 @@
         "sn": {
           "type": "string",
           "title": "设备sn"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
         }
       },
       "title": "设备分页请求参数"
@@ -960,6 +1040,10 @@
         "desc": {
           "type": "string",
           "title": "描述"
+        },
+        "p_id": {
+          "type": "string",
+          "title": "父设备id"
         }
       },
       "title": "设备修改请求参数"

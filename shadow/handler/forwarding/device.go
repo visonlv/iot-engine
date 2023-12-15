@@ -10,6 +10,7 @@ import (
 
 type Device struct {
 	Sn            string
+	PSn           string
 	Group         int32
 	Pk            string
 	Shadow        *define.Shadow
@@ -75,6 +76,7 @@ func (d *Devices) loadShadowFromDB(sn string) (*Device, error) {
 	}
 
 	info := &Device{
+		PSn:           s.PSn,
 		Sn:            sn,
 		Group:         utils.GetGroupId(sn),
 		Pk:            s.Pk,
