@@ -20,3 +20,7 @@ func IsSysModelCode(code string) bool {
 	_, ok := ModelExceptKeyWord[code]
 	return ok
 }
+
+func IsSysPropertyCode(code string) bool {
+	return code == PropertyOnline
+}

@@ -262,6 +262,11 @@ func (the *ForwardingService) Service(ctx context.Context, req *pb.ForwardingSer
 }
 
 func (the *ForwardingService) SetProperty(ctx context.Context, req *pb.ForwardingSetPropertyReq, resp *pb.ForwardingSetPropertyResp) error {
+	if define.IsSysPropertyCode(req.Code) {
+		resp.Code = errorsx.FAIL.Code
+		resp.Msg = "系统属性不可操作"
+		return nil
+	}
 	msg, err := forwarding.CommonSendMsg(ctx, &forwarding.SendMsgReq{
 		Sn:        req.Sn,
 		ContextId: req.ContextId,

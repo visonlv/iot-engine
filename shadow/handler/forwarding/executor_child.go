@@ -195,26 +195,12 @@ func pbProduct2Propruct(data []byte, withThingInfo bool) (*Product, error) {
 		return nil, fmt.Errorf("pbProduct2Propruct decode pb err:%s", err.Error())
 	}
 
-	thingInfo := &define.ThingInfo{}
-	if withThingInfo {
-		err = json.Unmarshal([]byte(p.ThingDef), thingInfo)
-		if err != nil {
-			logger.Infof("[forwarding] pbProduct2Propruct decode json err:%s", err.Error())
-			return nil, fmt.Errorf("pbProduct2Propruct decode json err:%s", err.Error())
-		}
+	m, err := convertProductPb2Info(p)
+	if err != nil {
+		return nil, fmt.Errorf("pbProduct2Propruct convertProductPb2Info err:%s", err.Error())
 	}
 
-	newp := &Product{
-		Pk:        p.Pk,
-		Transform: define.Transform(p.Transform),
-		Protocol:  define.Protocol(p.Protocol),
-		Type:      define.ProductType(p.Type),
-		ThingInfo: thingInfo,
-	}
-
-	bb, _ := json.Marshal(newp)
-	logger.Infof("p:%s", string(bb))
-	return newp, nil
+	return m, nil
 }
 
 func (s *executorChild) subNatsSysEvent() {
@@ -356,76 +342,19 @@ func (s *executorChild) ayncAddSimpleEvent(eventType int, param interface{}) {
 	s.asyncAddEvent(event)
 }
 
-func (s *executorChild) asynSendChildMsg(msg *SendMsgReq) error {
-	dInfo, pInfo, err := s.devices.getDeviceAndProduct(msg.Sn)
-	if err != nil {
-		return err
-	}
-
-	//1、判断设备是否在线
-	if !dInfo.Shadow.PropertyEqualTo(define.PropertyOnline, true) {
-		err = fmt.Errorf("设备不在线")
-	}
-
-	// 消息格式
-	topic := fmt.Sprintf("iot.down.%d.%s.%s.%s.%s", dInfo.Group, pInfo.Pk, dInfo.Sn, msg.MsgType, msg.Code)
-	m := &messaging.Message{
-		Id:        utilsx.GenUuid(),
-		ContextId: msg.ContextId,
-		Pk:        pInfo.Pk,
-		Sn:        dInfo.Sn,
-		Topic:     topic,
-		Transform: string(pInfo.Transform),
-		Protocol:  string(pInfo.Protocol),
-		Supplier:  "iot-engine",
-		Payload:   msg.Payload,
-		Created:   time.Now().UnixMilli(),
-	}
-
-	if err == nil {
-		_, err = s.eventHandler.decodeDownMsg(msg.MsgType, msg.Code, m, pInfo, dInfo)
-		if err != nil {
-			err = fmt.Errorf("[forwarding] decodeDownMsg decode msg fail:%s", err.Error())
-		}
-	}
-
-	if err == nil {
-		err = s.natsClient.Publish(context.Background(), topic, m)
-	}
-
-	result := "{}"
-	if err != nil {
-		result = fmt.Sprintf("{\"code\":-1,\"msg\":\"%s\"}", err.Error())
-	}
-
-	err1 := model.MsgLogInsert(context.Background(), &model.MsgLog{
-		Pk:        m.Pk,
-		Sn:        m.Sn,
-		Content:   string(m.Payload),
-		Topic:     strings.ReplaceAll(m.Topic, ".", "/"),
-		LogType:   msg.MsgType,
-		Ts:        time.Now(),
-		MsgId:     m.Id,
-		ContextId: m.ContextId,
-		Result:    result,
-		Dir:       string(define.ServiceDirDown),
-		Code:      msg.Code,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return err1
-}
-
 func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
-	dInfo, pInfo, err := s.devices.getDeviceAndProduct(msg.Sn)
-	if err != nil {
-		return err
+	dInfo, pInfo, globalErr := s.devices.getDeviceAndProduct(msg.Sn)
+	if globalErr != nil {
+		return globalErr
+	}
+
+	if dInfo.PSn == msg.Sn {
+		logger.Infof("[forwarding] asynSendMsg 网关sn跟子设备sn不能一样 sn:%s msg:%s", msg.Sn, utils.JsonToString(msg))
+		return fmt.Errorf("网关sn跟子设备sn一样")
 	}
 
 	directPublish := dInfo.PSn == ""
+	var newMsg *SendMsgReq
 	// 需要通过网关转发
 	if !directPublish {
 		dInfoGateway, _, err := s.devices.getDeviceAndProduct(dInfo.PSn)
@@ -434,46 +363,48 @@ func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
 		}
 
 		if !dInfoGateway.Shadow.PropertyEqualTo(define.PropertyOnline, true) {
-			err = fmt.Errorf("网关不在线")
+			globalErr = fmt.Errorf("网关不在线")
+			goto saveMsg
 		}
+
 		// 重新构造网关数据
 		sourcePayload := make(map[string]any)
 		err = json.Unmarshal(msg.Payload, &sourcePayload)
 		if err != nil {
-			err = fmt.Errorf("不是标准json格式", err.Error())
+			globalErr = fmt.Errorf("不是标准json格式:%s", err.Error())
+			goto saveMsg
 		}
 
-		if err == nil {
-			sourcePayload["identify"] = msg.Code
-			newPayload := &define.GateWayDownPayload{}
-			newPayload.Id = utilsx.GenUuid()
-			newPayload.ContextId = utilsx.GenUuid()
-			newPayload.Time = time.Now().UnixMilli()
-			newPayload.SubMsgs = make([]*define.GateWayDownChileMsg, 0)
-			newPayload.SubMsgs = append(newPayload.SubMsgs, &define.GateWayDownChileMsg{
-				Sn:  msg.Sn,
-				Msg: sourcePayload,
-			})
-			newPayloadbb, _ := json.Marshal(newPayload)
-			newMsg := &SendMsgReq{
-				Sn:        dInfo.PSn,
-				ContextId: utilsx.GenUuid(),
-				Code:      define.MsgCodeGatewayProxy,
-				MsgType:   msg.MsgType,
-				Payload:   newPayloadbb,
-				Timeout:   msg.Timeout,
-			}
-			return s.asynSendMsg(newMsg)
+		sourcePayload["identify"] = msg.Code
+		newPayload := &define.GateWayDownPayload{}
+		newPayload.Id = utilsx.GenUuid()
+		newPayload.ContextId = utilsx.GenUuid()
+		newPayload.Time = time.Now().UnixMilli()
+		newPayload.SubMsgs = make([]*define.GateWayDownChileMsg, 0)
+		newPayload.SubMsgs = append(newPayload.SubMsgs, &define.GateWayDownChileMsg{
+			Sn:  msg.Sn,
+			Msg: sourcePayload,
+		})
+		newPayloadbb, _ := json.Marshal(newPayload)
+		newMsg = &SendMsgReq{
+			Sn:        dInfo.PSn,
+			ContextId: utilsx.GenUuid(),
+			Code:      define.MsgCodeGatewayProxy,
+			MsgType:   msg.MsgType,
+			Payload:   newPayloadbb,
+			Timeout:   msg.Timeout,
 		}
 
 	}
 
 	//1、判断设备是否在线
-	if err != nil && !dInfo.Shadow.PropertyEqualTo(define.PropertyOnline, true) {
-		err = fmt.Errorf("设备不在线")
+	if globalErr == nil && !dInfo.Shadow.PropertyEqualTo(define.PropertyOnline, true) {
+		globalErr = fmt.Errorf("设备不在线")
+		goto saveMsg
 	}
 
 	// 消息格式
+saveMsg:
 	topic := fmt.Sprintf("iot.down.%d.%s.%s.%s.%s", dInfo.Group, pInfo.Pk, dInfo.Sn, msg.MsgType, msg.Code)
 	m := &messaging.Message{
 		Id:        utilsx.GenUuid(),
@@ -488,20 +419,20 @@ func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
 		Created:   time.Now().UnixMilli(),
 	}
 
-	if err == nil && !directPublish {
-		_, err = s.eventHandler.decodeDownMsg(msg.MsgType, msg.Code, m, pInfo, dInfo)
-		if err != nil {
-			err = fmt.Errorf("[forwarding] decodeDownMsg decode msg fail:%s", err.Error())
+	if globalErr == nil && !directPublish {
+		_, globalErr = s.eventHandler.decodeDownMsg(msg.MsgType, msg.Code, m, pInfo, dInfo)
+		if globalErr != nil {
+			globalErr = fmt.Errorf("[forwarding] decodeDownMsg decode msg fail:%s", globalErr.Error())
 		}
 	}
 
-	if err == nil && directPublish {
-		err = s.natsClient.Publish(context.Background(), topic, m)
+	if globalErr == nil && directPublish {
+		globalErr = s.natsClient.Publish(context.Background(), topic, m)
 	}
 
 	result := "{}"
-	if err != nil {
-		result = fmt.Sprintf("{\"code\":-1,\"msg\":\"%s\"}", err.Error())
+	if globalErr != nil {
+		result = fmt.Sprintf("{\"code\":-1,\"msg\":\"%s\"}", globalErr.Error())
 	}
 
 	err1 := model.MsgLogInsert(context.Background(), &model.MsgLog{
@@ -518,11 +449,19 @@ func (s *executorChild) asynSendMsg(msg *SendMsgReq) error {
 		Code:      msg.Code,
 	})
 
-	if err != nil {
-		return err
+	if globalErr != nil {
+		return globalErr
 	}
 
-	return err1
+	if err1 != nil {
+		return err1
+	}
+
+	if globalErr == nil && !directPublish {
+		return s.asynSendMsg(newMsg)
+	}
+
+	return nil
 }
 
 func (s *executorChild) syncSendMsg(req *synSendMsgEventReq, outCh chan *ChanEvent) error {
@@ -685,14 +624,18 @@ func (s *executorChild) tryPublishChildMsg(result *DecodeResult) {
 	info := result.PayloadResult.(*define.GateWayUpPayload)
 	if info.SubMsgs != nil && len(info.SubMsgs) > 0 {
 		for _, v := range info.SubMsgs {
+			if v.Sn == result.NatsMsg.Sn {
+				logger.Infof("[forwarding] tryPublishChildMsg 网关sn跟子设备sn不能一样 sn:%s msg:%s", v.Sn, utils.JsonToString(v))
+				continue
+			}
 			dInfo, pInfo, err := s.devices.getDeviceAndProduct(v.Sn)
 			if err != nil {
 				logger.Infof("[forwarding] tryPublishChildMsg getDeviceAndProduct sn:%s msg:%s err:%s", v.Sn, utils.JsonToString(v), err.Error())
 				continue
 			}
 
-			if v.Sn != result.NatsMsg.Sn {
-				logger.Infof("[forwarding] tryPublishChildMsg 设备sn:%s 不是 网关sn:%s 子设备 msg:%s", v.Sn, result.NatsMsg.Sn, utils.JsonToString(v))
+			if dInfo.PSn != result.NatsMsg.Sn {
+				logger.Infof("[forwarding] tryPublishChildMsg 设备sn:%s 设备psn:%s 不是 网关sn:%s 子设备 msg:%s", dInfo.Sn, dInfo.PSn, result.NatsMsg.Sn, utils.JsonToString(v))
 			}
 
 			topic := fmt.Sprintf("iot.up.%d.%s.%s.%s.%s", dInfo.Group, pInfo.Pk, dInfo.Sn, result.MsgType, v.Msg.Identify)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/visonlv/iot-engine/common/define"
 	"github.com/visonlv/iot-engine/common/proto/messaging"
+	"github.com/visonlv/iot-engine/common/utils"
 	pb "github.com/visonlv/iot-engine/shadow/proto"
 	thingpb "github.com/visonlv/iot-engine/thing/proto"
 
@@ -52,12 +53,12 @@ type Products struct {
 func (p *Products) AddOrUpdateProduct(product *Product) error {
 	if _, ok := p.pk2Product[product.Pk]; ok {
 		p.pk2Product[product.Pk] = product
-		logger.Infof("[forwarding] UpdateProduct pk:%s", product.Pk)
+		logger.Infof("[forwarding] UpdateProduct pk:%s data:%s", product.Pk, utils.JsonToString(product))
 		return nil
 	}
 
 	p.pk2Product[product.Pk] = product
-	logger.Infof("[forwarding] AddProduct pk:%s", product.Pk)
+	logger.Infof("[forwarding] AddProduct pk:%s data:%s", product.Pk, utils.JsonToString(product))
 	return nil
 }
 
