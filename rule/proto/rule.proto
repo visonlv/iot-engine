@@ -1,0 +1,168 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./;proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+// ---------------------------规则管理-----------------------------------
+service RuleService {
+    // 规则创建
+    rpc Add(RuleAddReq) returns (RuleAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/rule/RuleService.Add"
+            body : "*"
+        };
+    }
+    // 规则删除
+    rpc Del(RuleDelReq) returns (RuleDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/rule/RuleService.Del"
+            body : "*"
+        };
+    }
+    // 规则修改
+    rpc Update(RuleUpdateReq) returns (RuleUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/rule/RuleService.Update"
+            body : "*"
+        };
+    }
+    // 规则获取
+    rpc Get(RuleGetReq) returns (RuleGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/rule/RuleService.Get"
+            body : "*"
+        };
+    }
+    // 规则列表
+    rpc List(RuleListReq) returns (RuleListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/rule/RuleService.List"
+            body : "*"
+        };
+    }
+    // 规则分页
+    rpc Page(RulePageReq) returns (RulePageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/rule/RuleService.Page"
+            body : "*"
+        };
+    }
+}
+
+message Rule {
+    //规则id
+    string id = 1;
+    //产品pk
+    string pk = 2;
+    //规则sn
+    string sn = 3;
+    //后端生成
+    int32 group = 4;
+    //规则数据
+    string rule = 5;
+}
+
+//规则创建请求参数
+message RuleAddReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+    //规则sn
+    string sn = 2 [(validate.rules).string.min_len = 1];
+    //产品pk
+    string pk = 3[(validate.rules).string.min_len = 1];
+    //父设备sn
+    string p_sn = 4;
+    //父设备id
+    string p_id = 5;
+}
+
+//规则创建返回结果
+message RuleAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//规则删除请求参数
+message RuleDelReq {
+    //规则id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//规则删除返回结果
+message RuleDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//规则修改请求参数
+message RuleUpdateReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+    //规则sn
+    string sn = 2 [(validate.rules).string.min_len = 1];
+    //产品pk
+    string pk = 3[(validate.rules).string.min_len = 1];
+    //父设备sn
+    string p_sn = 4;
+    //父设备id
+    string p_id = 5;
+}
+
+//规则修改返回结果
+message RuleUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//规则获取请求参数
+message RuleGetReq {
+    //规则id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//规则获取返回结果
+message RuleGetResp{
+    int32 code = 1;
+    string msg = 2;
+    Rule item = 3;
+}
+
+//规则列表请求参数
+message RuleListReq {
+}
+
+//规则列表返回结果
+message RuleListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Rule items = 3;
+}
+
+//规则分页请求参数
+message RulePageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+}
+
+//规则分页返回结果
+message RulePageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated Rule items = 4;
+}
+

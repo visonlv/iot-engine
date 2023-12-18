@@ -1,0 +1,21 @@
+IsDebug = true
+
+# 服务启动的
+[Server]
+Address="0.0.0.0"
+GrpcPort = 10007
+
+[Mysql]
+Uri="root:123456@tcp(10.55.132.187:3306)/engine?charset=utf8mb4&parseTime=True&loc=Local"
+MaxConn=100
+MaxIdel=10
+MaxLifeTime=3600
+
+[Nats]
+Url = "nats://10.55.132.187:4223"
+Username = "ruser"
+Password = "T0pS3cr3t"
+
+[InnerClient]
+Group="127.0.0.1:10003"
+Thing="127.0.0.1:10002"

@@ -1,0 +1,168 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./;proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+// ---------------------------通知配置管理-----------------------------------
+service NotifyConfigService {
+    // 通知配置创建
+    rpc Add(NotifyConfigAddReq) returns (NotifyConfigAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/notify/NotifyConfigService.Add"
+            body : "*"
+        };
+    }
+    // 通知配置删除
+    rpc Del(NotifyConfigDelReq) returns (NotifyConfigDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/notify/NotifyConfigService.Del"
+            body : "*"
+        };
+    }
+    // 通知配置修改
+    rpc Update(NotifyConfigUpdateReq) returns (NotifyConfigUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/notify/NotifyConfigService.Update"
+            body : "*"
+        };
+    }
+    // 通知配置获取
+    rpc Get(NotifyConfigGetReq) returns (NotifyConfigGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/notify/NotifyConfigService.Get"
+            body : "*"
+        };
+    }
+    // 通知配置列表
+    rpc List(NotifyConfigListReq) returns (NotifyConfigListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/notify/NotifyConfigService.List"
+            body : "*"
+        };
+    }
+    // 通知配置分页
+    rpc Page(NotifyConfigPageReq) returns (NotifyConfigPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/notify/NotifyConfigService.Page"
+            body : "*"
+        };
+    }
+}
+
+message NotifyConfig {
+    //通知配置id
+    string id = 1;
+    //产品pk
+    string pk = 2;
+    //通知配置sn
+    string sn = 3;
+    //后端生成
+    int32 group = 4;
+    //通知配置数据
+    string notify = 5;
+}
+
+//通知配置创建请求参数
+message NotifyConfigAddReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+    //通知配置sn
+    string sn = 2 [(validate.rules).string.min_len = 1];
+    //产品pk
+    string pk = 3[(validate.rules).string.min_len = 1];
+    //父设备sn
+    string p_sn = 4;
+    //父设备id
+    string p_id = 5;
+}
+
+//通知配置创建返回结果
+message NotifyConfigAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知配置删除请求参数
+message NotifyConfigDelReq {
+    //通知配置id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知配置删除返回结果
+message NotifyConfigDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知配置修改请求参数
+message NotifyConfigUpdateReq {
+    //设备id
+    string id = 1 [(validate.rules).string.min_len = 1];
+    //通知配置sn
+    string sn = 2 [(validate.rules).string.min_len = 1];
+    //产品pk
+    string pk = 3[(validate.rules).string.min_len = 1];
+    //父设备sn
+    string p_sn = 4;
+    //父设备id
+    string p_id = 5;
+}
+
+//通知配置修改返回结果
+message NotifyConfigUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知配置获取请求参数
+message NotifyConfigGetReq {
+    //通知配置id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知配置获取返回结果
+message NotifyConfigGetResp{
+    int32 code = 1;
+    string msg = 2;
+    NotifyConfig item = 3;
+}
+
+//通知配置列表请求参数
+message NotifyConfigListReq {
+}
+
+//通知配置列表返回结果
+message NotifyConfigListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated NotifyConfig items = 3;
+}
+
+//通知配置分页请求参数
+message NotifyConfigPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+}
+
+//通知配置分页返回结果
+message NotifyConfigPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated NotifyConfig items = 4;
+}
+

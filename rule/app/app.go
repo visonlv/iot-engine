@@ -1,20 +1,14 @@
 package app
 
 import (
-	"time"
-
 	"github.com/nats-io/nats.go"
-	"github.com/visonlv/go-vkit/grpcclient"
 	"github.com/visonlv/go-vkit/logger"
 	"github.com/visonlv/go-vkit/mysqlx"
 	"github.com/visonlv/go-vkit/natsx"
-	shadowpb "github.com/visonlv/iot-engine/shadow/proto"
-	"github.com/visonlv/iot-engine/thing/config"
+	"github.com/visonlv/iot-engine/rule/config"
 )
 
 type CClient struct {
-	ShadowService     *shadowpb.ShadowServiceClient
-	ForwardingService *shadowpb.ForwardingServiceClient
 }
 
 var (
@@ -77,16 +71,5 @@ func initNats() {
 }
 
 func initClient() {
-	Client = &CClient{}
-	conn1 := grpcclient.GetConnClient(
-		Cfg.InnerClient.Shadow,
-		grpcclient.RequestTimeout(time.Second*20),
-	)
-	Client.ShadowService = shadowpb.NewShadowServiceClient("shadow", conn1)
 
-	conn2 := grpcclient.GetConnClient(
-		Cfg.InnerClient.Shadow,
-		grpcclient.RequestTimeout(time.Second*20),
-	)
-	Client.ForwardingService = shadowpb.NewForwardingServiceClient("route", conn2)
 }

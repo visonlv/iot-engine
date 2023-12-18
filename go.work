@@ -5,8 +5,10 @@ use (
 	./common
 	./gate
 	./group
+	./notify
 	./proxy
 	./route
+	./rule
 	./shadow
 	./thing
 )
