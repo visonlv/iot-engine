@@ -53,7 +53,7 @@ func InitAllProduct() {
 	}
 }
 
-func LoadThingDef(m *model.ProductModel) (*define.ThingInfo, error) {
+func LoadThingDef(m *model.ProductModel, withMap bool) (*define.ThingInfo, error) {
 	list, err := model.ProductModelList(nil, m.Id, "", "", "")
 	if err != nil {
 		return nil, err
@@ -90,11 +90,46 @@ func LoadThingDef(m *model.ProductModel) (*define.ThingInfo, error) {
 		}
 	}
 
+	if withMap {
+		thingInfo.PropertyMap = make(map[string]*define.Property)
+		for _, v := range thingInfo.Properties {
+			thingInfo.PropertyMap[v.Code] = v
+		}
+
+		thingInfo.EventMap = make(map[string]*define.Event)
+		for _, v := range thingInfo.Events {
+			thingInfo.EventMap[v.Code] = v
+			v.ParamMap = make(map[string]*define.Param)
+			for _, v1 := range v.Params {
+				v.ParamMap[v1.Code] = v1
+			}
+		}
+
+		thingInfo.UpServiceMap = make(map[string]*define.Service)
+		thingInfo.DownServiceMap = make(map[string]*define.Service)
+		for _, v := range thingInfo.Services {
+			if v.Dir == define.ServiceDirUp {
+				thingInfo.UpServiceMap[v.Code] = v
+			} else {
+				thingInfo.DownServiceMap[v.Code] = v
+			}
+			v.InputMap = make(map[string]*define.Param)
+			for _, v1 := range v.Input {
+				v.InputMap[v1.Code] = v1
+			}
+
+			v.OutputMap = make(map[string]*define.Param)
+			for _, v1 := range v.Output {
+				v.OutputMap[v1.Code] = v1
+			}
+		}
+	}
+
 	return thingInfo, nil
 }
 
 func SyncOneProduct(m *model.ProductModel) error {
-	thingInfo, err := LoadThingDef(m)
+	thingInfo, err := LoadThingDef(m, false)
 	if err != nil {
 		return err
 	}

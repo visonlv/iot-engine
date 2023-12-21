@@ -694,3 +694,179 @@ message ProductModelPageResp{
 	repeated ProductModel items = 4;
 }
 
+
+
+// ---------------------------规则管理-----------------------------------
+service RuleService {
+    // 规则创建
+    rpc Add(RuleAddReq) returns (RuleAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/RuleService.Add"
+            body : "*"
+        };
+    }
+    // 规则删除
+    rpc Del(RuleDelReq) returns (RuleDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/RuleService.Del"
+            body : "*"
+        };
+    }
+    // 规则修改
+    rpc Update(RuleUpdateReq) returns (RuleUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/RuleService.Update"
+            body : "*"
+        };
+    }
+    // 规则获取
+    rpc Get(RuleGetReq) returns (RuleGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/RuleService.Get"
+            body : "*"
+        };
+    }
+    // 规则列表
+    rpc List(RuleListReq) returns (RuleListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/RuleService.List"
+            body : "*"
+        };
+    }
+    // 规则分页
+    rpc Page(RulePageReq) returns (RulePageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/RuleService.Page"
+            body : "*"
+        };
+    }
+}
+
+message Rule {
+    //规则id
+    string id = 1;
+    //规则名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //触发类型
+    string trigger_type = 3[(validate.rules).string.min_len = 1];
+    //触发元数据
+    string trigger = 4[(validate.rules).string.min_len = 1];
+    //动作元数据
+    string action = 5[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 6;
+    //创建时间
+    int64 create_time = 7;
+}
+
+//规则创建请求参数
+message RuleAddReq {
+    //规则名称
+    string name = 1 [(validate.rules).string.min_len = 1];
+    //触发类型
+    string trigger_type = 2[(validate.rules).string.min_len = 1];
+    //触发元数据
+    string trigger = 3[(validate.rules).string.min_len = 1];
+    //动作元数据
+    string action = 4[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 5;
+}
+
+//规则创建返回结果
+message RuleAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//规则删除请求参数
+message RuleDelReq {
+    //规则id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//规则删除返回结果
+message RuleDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//规则修改请求参数
+message RuleUpdateReq {
+    //规则id
+    string id = 1;
+    //规则名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //触发类型
+    string trigger_type = 3[(validate.rules).string.min_len = 1];
+    //触发元数据
+    string trigger = 4[(validate.rules).string.min_len = 1];
+    //动作元数据
+    string action = 5[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 6;
+}
+
+//规则修改返回结果
+message RuleUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//规则获取请求参数
+message RuleGetReq {
+    //规则id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//规则获取返回结果
+message RuleGetResp{
+    int32 code = 1;
+    string msg = 2;
+    Rule item = 3;
+}
+
+//规则列表请求参数
+message RuleListReq {
+    //规则名称
+    string name = 1;
+    //触发类型
+    string trigger_type = 2;
+}
+
+//规则列表返回结果
+message RuleListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated Rule items = 3;
+}
+
+//规则分页请求参数
+message RulePageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //规则名称
+    string name = 3;
+    //触发类型
+    string trigger_type = 4;
+}
+
+//规则分页返回结果
+message RulePageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated Rule items = 4;
+}
+

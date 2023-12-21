@@ -48,9 +48,9 @@ func RuleGet(tx *mysqlx.MysqlClient, id string) (*RuleModel, error) {
 	return item, result.GetDB().Error
 }
 
-func RuleGetBySn(tx *mysqlx.MysqlClient, sn string) (*RuleModel, error) {
+func RuleByName(tx *mysqlx.MysqlClient, name string) (*RuleModel, error) {
 	item := &RuleModel{}
-	result := getTx(tx).Where("sn = ? AND is_delete = ?", sn, 0).First(item)
+	result := getTx(tx).Where("name = ? AND is_delete = ?", name, 0).First(item)
 	return item, result.GetDB().Error
 }
 
@@ -63,39 +63,27 @@ func RuleUpdate(tx *mysqlx.MysqlClient, m *RuleModel) error {
 	return getTx(tx).UpdateEx(m)
 }
 
-func RulePage(tx *mysqlx.MysqlClient, pageIndex int32, pageSize int32, pk, name, sn, pId string) ([]*RuleModel, int32, error) {
+func RulePage(tx *mysqlx.MysqlClient, pageIndex int32, pageSize int32, name, triggerType string) ([]*RuleModel, int32, error) {
 	items := []*RuleModel{}
 	var total int32
 	query := getTx(tx).Model(rule_model).Where("is_delete = ?", 0)
 	if name != "" {
 		query = query.Where("name like ?", "%"+name+"%")
 	}
-	if pk != "" {
-		query = query.Where("pk = ?", pk)
-	}
-	if sn != "" {
-		query = query.Where("sn = ?", sn)
-	}
-	if pId != "" {
-		query = query.Where("p_id = ?", pId)
+	if triggerType != "" {
+		query = query.Where("trigger_type = ?", triggerType)
 	}
 	err := query.Order("created_at desc").FindPage(pageIndex, pageSize, &items, &total)
 	return items, total, err
 }
 
-func RuleList(tx *mysqlx.MysqlClient, pk, name, sn, pId string) (list []*RuleModel, err error) {
+func RuleList(tx *mysqlx.MysqlClient, name, triggerType string) (list []*RuleModel, err error) {
 	query := getTx(tx).Model(rule_model).Where("is_delete = ?", 0)
 	if name != "" {
 		query = query.Where("name like ?", "%"+name+"%")
 	}
-	if pk != "" {
-		query = query.Where("pk = ?", pk)
-	}
-	if sn != "" {
-		query = query.Where("sn = ?", sn)
-	}
-	if pId != "" {
-		query = query.Where("p_id = ?", pId)
+	if triggerType != "" {
+		query = query.Where("trigger_type = ?", triggerType)
 	}
 	err = query.FindList(&list)
 	return

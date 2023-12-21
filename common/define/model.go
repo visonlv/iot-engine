@@ -376,6 +376,49 @@ func IsThingParamsDefValid(params []*Param) error {
 	return nil
 }
 
+func ThingDef2Info(thingDef string) (*ThingInfo, error) {
+	m := &ThingInfo{}
+	err := json.Unmarshal([]byte(thingDef), m)
+	if err != nil {
+		return nil, err
+	}
+
+	m.PropertyMap = make(map[string]*Property)
+	for _, v := range m.Properties {
+		m.PropertyMap[v.Code] = v
+	}
+
+	m.EventMap = make(map[string]*Event)
+	for _, v := range m.Events {
+		m.EventMap[v.Code] = v
+		v.ParamMap = make(map[string]*Param)
+		for _, v1 := range v.Params {
+			v.ParamMap[v1.Code] = v1
+		}
+	}
+
+	m.UpServiceMap = make(map[string]*Service)
+	m.DownServiceMap = make(map[string]*Service)
+	for _, v := range m.Services {
+		if v.Dir == ServiceDirUp {
+			m.UpServiceMap[v.Code] = v
+		} else {
+			m.DownServiceMap[v.Code] = v
+		}
+		v.InputMap = make(map[string]*Param)
+		for _, v1 := range v.Input {
+			v.InputMap[v1.Code] = v1
+		}
+
+		v.OutputMap = make(map[string]*Param)
+		for _, v1 := range v.Output {
+			v.OutputMap[v1.Code] = v1
+		}
+	}
+
+	return m, nil
+}
+
 func IsBaseDefineValid(v *BaseParamDefine, sub bool) error {
 	if v.Code == "" {
 		return fmt.Errorf("param code should set")

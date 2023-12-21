@@ -187,47 +187,55 @@
           "type": "string",
           "title": "规则id"
         },
-        "pk": {
+        "name": {
           "type": "string",
-          "title": "产品pk"
+          "title": "规则名称"
         },
-        "sn": {
+        "trigger_type": {
           "type": "string",
-          "title": "规则sn"
+          "title": "触发类型"
         },
-        "group": {
-          "type": "integer",
-          "format": "int32",
-          "title": "后端生成"
-        },
-        "rule": {
+        "trigger": {
           "type": "string",
-          "title": "规则数据"
+          "title": "触发元数据"
+        },
+        "action": {
+          "type": "string",
+          "title": "动作元数据"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
         }
       }
     },
     "protoRuleAddReq": {
       "type": "object",
       "properties": {
-        "id": {
+        "name": {
           "type": "string",
-          "title": "设备id"
+          "title": "规则名称"
         },
-        "sn": {
+        "trigger_type": {
           "type": "string",
-          "title": "规则sn"
+          "title": "触发类型"
         },
-        "pk": {
+        "trigger": {
           "type": "string",
-          "title": "产品pk"
+          "title": "触发元数据"
         },
-        "p_sn": {
+        "action": {
           "type": "string",
-          "title": "父设备sn"
+          "title": "动作元数据"
         },
-        "p_id": {
+        "desc": {
           "type": "string",
-          "title": "父设备id"
+          "title": "描述"
         }
       },
       "title": "规则创建请求参数"
@@ -302,7 +310,16 @@
     },
     "protoRuleListReq": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "规则名称"
+        },
+        "trigger_type": {
+          "type": "string",
+          "title": "触发类型"
+        }
+      },
       "title": "规则列表请求参数"
     },
     "protoRuleListResp": {
@@ -337,6 +354,14 @@
           "type": "integer",
           "format": "int32",
           "title": "每页多少条"
+        },
+        "name": {
+          "type": "string",
+          "title": "规则名称"
+        },
+        "trigger_type": {
+          "type": "string",
+          "title": "触发类型"
         }
       },
       "title": "规则分页请求参数"
@@ -370,23 +395,27 @@
       "properties": {
         "id": {
           "type": "string",
-          "title": "设备id"
+          "title": "规则id"
         },
-        "sn": {
+        "name": {
           "type": "string",
-          "title": "规则sn"
+          "title": "规则名称"
         },
-        "pk": {
+        "trigger_type": {
           "type": "string",
-          "title": "产品pk"
+          "title": "触发类型"
         },
-        "p_sn": {
+        "trigger": {
           "type": "string",
-          "title": "父设备sn"
+          "title": "触发元数据"
         },
-        "p_id": {
+        "action": {
           "type": "string",
-          "title": "父设备id"
+          "title": "动作元数据"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
         }
       },
       "title": "规则修改请求参数"

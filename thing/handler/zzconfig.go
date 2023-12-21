@@ -14,6 +14,7 @@ func GetList() []interface{} {
 	list = append(list, &DeviceService{})
 	list = append(list, &ProductService{})
 	list = append(list, &ProductModelService{})
+	list = append(list, &RuleService{})
 	
 	return list
 }
@@ -133,6 +134,36 @@ func GetApiEndpoint() []*grpcx.ApiEndpoint {
 		},{
 			Method:"ProductModelService.Page",
 			Url:"/rpc/thing/ProductModelService.Page", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"RuleService.Add",
+			Url:"/rpc/thing/RuleService.Add", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"RuleService.Del",
+			Url:"/rpc/thing/RuleService.Del", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"RuleService.Update",
+			Url:"/rpc/thing/RuleService.Update", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"RuleService.Get",
+			Url:"/rpc/thing/RuleService.Get", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"RuleService.List",
+			Url:"/rpc/thing/RuleService.List", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"RuleService.Page",
+			Url:"/rpc/thing/RuleService.Page", 
 			ClientStream:false, 
 			ServerStream:false,
 		},

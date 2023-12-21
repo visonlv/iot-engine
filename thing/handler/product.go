@@ -218,7 +218,7 @@ func (the *ProductService) List(ctx context.Context, req *pb.ProductListReq, res
 		utilsx.DeepCopy(m, itemRet)
 		itemRet.CreateTime = m.CreatedAt.UnixMilli()
 		if req.LoadModelDef {
-			info, err := product.LoadThingDef(m)
+			info, err := product.LoadThingDef(m, false)
 			if err != nil {
 				resp.Code = errorsx.FAIL.Code
 				resp.Msg = fmt.Sprintf("加载物模型失败:%s", err.Error())
@@ -262,7 +262,7 @@ func (the *ProductService) GetModel(ctx context.Context, req *pb.ProductGetModel
 		resp.Msg = fmt.Sprintf("获取产品失败:%s", err.Error())
 		return nil
 	}
-	thingDef, err := product.LoadThingDef(m)
+	thingDef, err := product.LoadThingDef(m, false)
 	if err != nil {
 		resp.Code = errorsx.FAIL.Code
 		resp.Msg = err.Error()
