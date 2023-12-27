@@ -13,6 +13,7 @@ import (
 
 type CClient struct {
 	ProductService *thingpb.ProductServiceClient
+	RuleService    *thingpb.RuleServiceClient
 }
 
 var (
@@ -65,4 +66,5 @@ func initClient() {
 		grpcclient.RequestTimeout(time.Second*20),
 	)
 	Client.ProductService = thingpb.NewProductServiceClient("thing", conn1)
+	Client.RuleService = thingpb.NewRuleServiceClient("thing", conn1)
 }

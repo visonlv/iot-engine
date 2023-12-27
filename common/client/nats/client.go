@@ -42,7 +42,11 @@ func NewSub(url, username, passwod, clientId, queue string) (client.Sub, error) 
 
 func NewClient(url, username, passwod, clientId, queue string) (*NatsClient, error) {
 	cli := &NatsClient{}
+	mu := new(sync.RWMutex)
 	sub := func() {
+		mu.Lock()
+		defer mu.Unlock()
+
 		if cli.subscriptions == nil {
 			logger.Infof("[nats] id:%s cli.subscriptions is nill", clientId)
 			return
@@ -92,7 +96,7 @@ func NewClient(url, username, passwod, clientId, queue string) (*NatsClient, err
 	cli.clientId = clientId
 	cli.queue = queue
 	cli.cc = cc
-	cli.mu = new(sync.RWMutex)
+	cli.mu = mu
 	cli.subscriptions = make(map[string]subscription)
 
 	return cli, nil

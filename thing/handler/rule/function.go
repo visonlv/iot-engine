@@ -20,17 +20,17 @@ func parseAndGetTrigger(triggerType string, trigger string) (*define.RuleTrigger
 		return nil, err
 	}
 
-	if triggerType == define.RULE_TRIGGER_TYPE_MODEL {
-		if ruleTrigger.TriggerModel == nil {
+	if triggerType == define.RULE_TRIGGER_TYPE_MSG {
+		if ruleTrigger.TriggerMsg == nil {
 			return nil, fmt.Errorf("物模型触发参数为空")
 		}
-		p, err := model.ProductGetByPk(nil, ruleTrigger.TriggerModel.Pk)
+		p, err := model.ProductGetByPk(nil, ruleTrigger.TriggerMsg.Pk)
 		if err != nil {
-			return nil, fmt.Errorf("获取产品:%s 失败:%s", ruleTrigger.TriggerModel.Pk, err.Error())
+			return nil, fmt.Errorf("获取产品:%s 失败:%s", ruleTrigger.TriggerMsg.Pk, err.Error())
 		}
 		thingInfo, err := product.LoadThingDef(p, true)
 		if err != nil {
-			return nil, fmt.Errorf("物模型解析失败 产品:%s 失败:%s", ruleTrigger.TriggerModel.Pk, err.Error())
+			return nil, fmt.Errorf("物模型解析失败 产品:%s 失败:%s", ruleTrigger.TriggerMsg.Pk, err.Error())
 		}
 		ruleTrigger.ThingInfo = thingInfo
 	}
@@ -54,5 +54,4 @@ func ParseTriggerAndAction(triggerType string, trigger string, action string) (*
 	}
 
 	return triggerInfo, node, nil
-
 }

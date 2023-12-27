@@ -3,13 +3,14 @@ package define
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cast"
 	"github.com/visonlv/go-vkit/logger"
 )
 
 const (
-	RULE_TRIGGER_TYPE_MODEL  = "model"
+	RULE_TRIGGER_TYPE_MSG    = "msg"
 	RULE_TRIGGER_TYPE_TIME   = "time"
 	RULE_TRIGGER_TYPE_MANUAL = "manual"
 	RULE_TRIGGER_TYPE_TOPIC  = "topic"
@@ -18,6 +19,14 @@ const (
 	RULE_NODE_TYPE_NORMAL   = "normal"
 	RULE_NODE_TYPE_SERIAL   = "serial"
 	RULE_NODE_TYPE_PARALLEL = "parallel"
+
+	RULE_NODE_TYPE_NORMAL_SET_PROPERTY = "normal_set_property"
+	RULE_NODE_TYPE_NORMAL_GET_PROPERTY = "normal_get_property"
+	RULE_NODE_TYPE_NORMAL_SERVICE      = "normal_service"
+	RULE_NODE_TYPE_NORMAL_NOTIFY       = "normal_notify"
+	RULE_NODE_TYPE_NORMAL_ALARM        = "normal_alarm"
+	RULE_NODE_TYPE_NORMAL_CANCEL_ALARM = "normal_cancel_alarm"
+	RULE_NODE_TYPE_NORMAL_DELAY        = "normal_delay"
 
 	RULE_ACTION_TYPE_DEVICE       = "device"
 	RULE_ACTION_TYPE_DELAY        = "delay"
@@ -39,7 +48,6 @@ const (
 	RULE_CONDITION_KEY_FROM_MODEL_PRE = "model_pre"
 	RULE_CONDITION_KEY_FROM_SYS       = "sys"
 	RULE_CONDITION_KEY_FROM_PRE       = "pre"
-	RULE_CONDITION_KEY_FROM_PARENT    = "parent"
 
 	RULE_CONDITION_KEY_TYPE_INT    = "int"
 	RULE_CONDITION_KEY_TYPE_FLOAT  = "float"
@@ -63,7 +71,7 @@ type RuleTriggerTimer struct {
 type RuleTriggerManual struct {
 }
 
-type RuleTriggerModel struct {
+type RuleTriggerMsg struct {
 	Pk      string   `json:"pk"`
 	IsAllSn bool     `json:"is_all_sn"`
 	Sns     []string `json:"sns"`
@@ -79,7 +87,7 @@ type RuleTrigger struct {
 	Type          string             `json:"-"`
 	ThingInfo     *ThingInfo         `json:"-"`
 	ShakeLimit    *RuleShakeLimit    `json:"shake_limit,omitempty"`
-	TriggerModel  *RuleTriggerModel  `json:"trigger_model,omitempty"`
+	TriggerMsg    *RuleTriggerMsg    `json:"trigger_msg,omitempty"`
 	TriggerTimer  *RuleTriggerTimer  `json:"trigger_timer,omitempty"`
 	TriggerManual *RuleTriggerManual `json:"trigger_manual,omitempty"`
 	TriggerTopic  *RuleTriggerTopic  `json:"trigger_topic,omitempty"`
@@ -116,9 +124,9 @@ type RuleAction struct {
 }
 
 type RuleConditionKeyWord struct {
-	Type string `json:"type"`
-	From string `json:"from"`
-	Word string `json:"word"`
+	Type string   `json:"type"`
+	From string   `json:"from"`
+	Word []string `json:"word"`
 }
 
 type RuleCondition struct {
@@ -130,14 +138,14 @@ type RuleCondition struct {
 }
 
 type RuleNode struct {
-	Id               string                    `json:"id"`
-	Type             string                    `json:"type"`
-	Conditions       []*RuleCondition          `json:"conditions,omitempty"`
-	SerialConditions []*RuleCondition          `json:"serial_conditions,omitempty"`
-	ActionType       string                    `json:"action_type"`
-	Action           *RuleAction               `json:"action,omitempty"`
-	Nodes            []*RuleNode               `json:"nodes,omitempty"`
-	ExecContext      map[string]map[string]any `json:"-"`
+	Id               string           `json:"id"`
+	Type             string           `json:"type"`
+	NormalType       string           `json:"normal_type"`
+	Conditions       []*RuleCondition `json:"conditions,omitempty"`
+	SwitchConditions []*RuleCondition `json:"switch_conditions,omitempty"`
+	ActionType       string           `json:"action_type"`
+	Action           *RuleAction      `json:"action,omitempty"`
+	Nodes            []*RuleNode      `json:"nodes,omitempty"`
 }
 
 func RuleActionValid(actionType string, ruleAction *RuleAction) (*RuleAction, error) {
@@ -287,7 +295,7 @@ func RuleConditionValid(trigger *RuleTrigger, ruleCondition *RuleCondition) (*Ru
 				return nil, err
 			}
 			newValues = append(newValues, oneValue)
-		} else if ruleCondition.Op == RULE_CONDITION_OP_E || ruleCondition.Op == RULE_CONDITION_OP_NE {
+		} else if ruleCondition.Op == RULE_CONDITION_OP_IN || ruleCondition.Op == RULE_CONDITION_OP_NIN {
 			for _, v := range values {
 				tempValue, err := cast.ToStringE(v)
 				if err != nil {
@@ -309,8 +317,6 @@ func RuleConditionValid(trigger *RuleTrigger, ruleCondition *RuleCondition) (*Ru
 		//系统预设参数 cur_time(秒级时间戳)
 	case RULE_CONDITION_KEY_FROM_PRE:
 		//前一个节点结果 code msg result.xxx result.xxx.xxx
-	case RULE_CONDITION_KEY_FROM_PARENT:
-		//父节点结果 code msg result.xxx result.xxx.xxx
 	default:
 		return nil, fmt.Errorf("不支持该条件参数类型")
 	}
@@ -350,17 +356,17 @@ func RuleNodeIsValid(trigger *RuleTrigger, parentNode *RuleNode, ruleNode *RuleN
 		}
 		ruleNode.Conditions = newConditions
 
-		newSerialConditions := make([]*RuleCondition, 0)
-		if ruleNode.SerialConditions == nil {
-			for _, v := range ruleNode.SerialConditions {
+		newSwitchConditions := make([]*RuleCondition, 0)
+		if ruleNode.SwitchConditions == nil {
+			for _, v := range ruleNode.SwitchConditions {
 				newSerialCondition, err := RuleConditionValid(trigger, v)
 				if err != nil {
 					return nil, err
 				}
-				newSerialConditions = append(newSerialConditions, newSerialCondition)
+				newSwitchConditions = append(newSwitchConditions, newSerialCondition)
 			}
 		}
-		ruleNode.SerialConditions = newSerialConditions
+		ruleNode.SwitchConditions = newSwitchConditions
 	case RULE_NODE_TYPE_PARALLEL:
 		//并行节点没动作
 		ruleNode.ActionType = ""
@@ -386,7 +392,7 @@ func RuleNodeIsValid(trigger *RuleTrigger, parentNode *RuleNode, ruleNode *RuleN
 			return nil, err
 		}
 		ruleNode.Action = action
-		ruleNode.SerialConditions = nil
+		ruleNode.SwitchConditions = nil
 		//父节点是分支节点或者并行节点是没有条件的
 		if parentNode.Type == RULE_NODE_TYPE_SWITCH || parentNode.Type == RULE_NODE_TYPE_PARALLEL {
 			ruleNode.Conditions = nil
@@ -414,7 +420,6 @@ func RuleNodeIsValid(trigger *RuleTrigger, parentNode *RuleNode, ruleNode *RuleN
 			if err != nil {
 				return nil, err
 			}
-			newNode.ExecContext = ruleNode.ExecContext
 			newNodeList = append(newNodeList, newNode)
 		}
 	}
@@ -428,8 +433,6 @@ func ParseRuleRoot(trigger *RuleTrigger, rule string) (*RuleNode, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	ruleNode.ExecContext = make(map[string]map[string]any)
 	return RuleNodeIsValid(trigger, nil, ruleNode)
 }
 
@@ -449,35 +452,35 @@ func RuleTriggerIsValid(trigger *RuleTrigger) (*RuleTrigger, error) {
 	}
 
 	switch trigger.Type {
-	case RULE_TRIGGER_TYPE_MODEL:
-		if trigger.TriggerModel == nil {
+	case RULE_TRIGGER_TYPE_MSG:
+		if trigger.TriggerMsg == nil {
 			return nil, fmt.Errorf("物模型触发参数为空")
 		}
-		if trigger.TriggerModel.Pk == "" {
+		if trigger.TriggerMsg.Pk == "" {
 			return nil, fmt.Errorf("物模型触发需要指定产品")
 		}
 		// 外部检查
-		if trigger.TriggerModel.Pk == "" {
+		if trigger.TriggerMsg.Pk == "" {
 			return nil, fmt.Errorf("物模型触发需要指定产品")
 		}
 
-		if !trigger.TriggerModel.IsAllSn {
-			if trigger.TriggerModel.Sns == nil || len(trigger.TriggerModel.Pk) <= 0 {
+		if !trigger.TriggerMsg.IsAllSn {
+			if trigger.TriggerMsg.Sns == nil || len(trigger.TriggerMsg.Pk) <= 0 {
 				return nil, fmt.Errorf("物模型触发需要指定设备")
 			}
 		}
 
-		if !trigger.TriggerModel.IsAllSn {
-			if trigger.TriggerModel.Sns == nil || len(trigger.TriggerModel.Pk) <= 0 {
+		if !trigger.TriggerMsg.IsAllSn {
+			if trigger.TriggerMsg.Sns == nil || len(trigger.TriggerMsg.Pk) <= 0 {
 				return nil, fmt.Errorf("物模型触发需要指定设备")
 			}
 		}
 
-		if trigger.TriggerModel.MsgType == "" {
+		if trigger.TriggerMsg.MsgType == "" {
 			return nil, fmt.Errorf("物模型触发需要指定消息类型")
 		}
 
-		if trigger.TriggerModel.Code == "" {
+		if trigger.TriggerMsg.Code == "" {
 			return nil, fmt.Errorf("物模型触发需要指定消息代码")
 		}
 	case RULE_TRIGGER_TYPE_TIME:
@@ -512,4 +515,385 @@ func jsonToString(v interface{}) string {
 		return ""
 	}
 	return string(ret)
+}
+
+func CheckConditionBool(typeCurValue bool, op, key string, values []any, curValue any) (bool, error) {
+	var err error
+	if curValue != nil {
+		typeCurValue, err = cast.ToBoolE(curValue)
+		if err != nil {
+			return false, fmt.Errorf("当前属性:%s 并非类型:%s 而是:%T err:%s", key, "bool", curValue, err.Error())
+		}
+	}
+	typeNeedValue, err := cast.ToBoolE(values[0])
+	if err != nil {
+		return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "bool", values[0], err.Error())
+	}
+
+	if op == RULE_CONDITION_OP_E {
+		return typeCurValue == typeNeedValue, nil
+	} else {
+		return typeCurValue != typeNeedValue, nil
+	}
+}
+
+func CheckConditionInt(typeCurValue int32, op, key string, values []any, curValue any) (bool, error) {
+	var err error
+	if curValue != nil {
+		typeCurValue, err = cast.ToInt32E(curValue)
+		if err != nil {
+			return false, fmt.Errorf("当前属性:%s 并非类型:%s 而是:%T err:%s", key, "int32", curValue, err.Error())
+		}
+	}
+	typeNeedValue, err := cast.ToInt32E(values[0])
+	if err != nil {
+		return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "int32", values[0], err.Error())
+	}
+
+	switch op {
+	case RULE_CONDITION_OP_E:
+		return typeCurValue == typeNeedValue, nil
+	case RULE_CONDITION_OP_NE:
+		return typeCurValue != typeNeedValue, nil
+	case RULE_CONDITION_OP_LT:
+		return typeCurValue < typeNeedValue, nil
+	case RULE_CONDITION_OP_LTE:
+		return typeCurValue <= typeNeedValue, nil
+	case RULE_CONDITION_OP_GT:
+		return typeCurValue > typeNeedValue, nil
+	case RULE_CONDITION_OP_GTE:
+		return typeCurValue >= typeNeedValue, nil
+	case RULE_CONDITION_OP_IN:
+		isContain := false
+		for _, v1 := range values {
+			typeNeedValue, err := cast.ToInt32E(v1)
+			if err != nil {
+				return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "int32", v1, err.Error())
+			}
+			if typeCurValue == typeNeedValue {
+				isContain = true
+				break
+			}
+		}
+		return isContain, nil
+	case RULE_CONDITION_OP_NIN:
+		isContain := false
+		for _, v1 := range values {
+			typeNeedValue, err := cast.ToInt32E(v1)
+			if err != nil {
+				return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "int32", v1, err.Error())
+			}
+			if typeCurValue == typeNeedValue {
+				isContain = true
+				break
+			}
+		}
+		return !isContain, nil
+	case RULE_CONDITION_OP_BT:
+		typeNeedValue1, err := cast.ToInt32E(values[1])
+		if err != nil {
+			return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "int32", values[1], err.Error())
+		}
+		return typeNeedValue1 >= typeCurValue && typeNeedValue <= typeCurValue, nil
+	case RULE_CONDITION_OP_NBT:
+		typeNeedValue1, err := cast.ToInt32E(values[1])
+		if err != nil {
+			return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "int32", values[1], err.Error())
+		}
+		return !(typeNeedValue1 >= typeCurValue && typeNeedValue <= typeCurValue), nil
+	}
+	return false, nil
+}
+
+func CheckConditionString(typeCurValue string, op, key string, values []any, curValue any) (bool, error) {
+	var err error
+	if curValue != nil {
+		typeCurValue, err = cast.ToStringE(curValue)
+		if err != nil {
+			return false, fmt.Errorf("当前属性:%s 并非类型:%s 而是:%T err:%s", key, "string", curValue, err.Error())
+		}
+	}
+	typeNeedValue, err := cast.ToStringE(values[0])
+	if err != nil {
+		return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "string", values[0], err.Error())
+	}
+
+	switch op {
+	case RULE_CONDITION_OP_E:
+		return typeCurValue == typeNeedValue, nil
+	case RULE_CONDITION_OP_NE:
+		return typeCurValue != typeNeedValue, nil
+	case RULE_CONDITION_OP_IN:
+		isContain := false
+		for _, v1 := range values {
+			typeNeedValue, err := cast.ToStringE(v1)
+			if err != nil {
+				return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "string", v1, err.Error())
+			}
+			if typeCurValue == typeNeedValue {
+				isContain = true
+				break
+			}
+		}
+		return isContain, nil
+	case RULE_CONDITION_OP_NIN:
+		isContain := false
+		for _, v1 := range values {
+			typeNeedValue, err := cast.ToStringE(v1)
+			if err != nil {
+				return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "string", v1, err.Error())
+			}
+			if typeCurValue == typeNeedValue {
+				isContain = true
+				break
+			}
+		}
+		return !isContain, nil
+	}
+	return false, nil
+}
+
+func CheckConditionFloat(typeCurValue float32, op, key string, values []any, curValue any) (bool, error) {
+	var err error
+	if curValue != nil {
+		typeCurValue, err = cast.ToFloat32E(curValue)
+		if err != nil {
+			return false, fmt.Errorf("当前属性:%s 并非类型:%s 而是:%T err:%s", key, "float32", curValue, err.Error())
+		}
+	}
+	typeNeedValue, err := cast.ToFloat32E(values[0])
+	if err != nil {
+		return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "float32", values[0], err.Error())
+	}
+
+	switch op {
+	case RULE_CONDITION_OP_E:
+		return typeCurValue == typeNeedValue, nil
+	case RULE_CONDITION_OP_NE:
+		return typeCurValue != typeNeedValue, nil
+	case RULE_CONDITION_OP_LT:
+		return typeCurValue < typeNeedValue, nil
+	case RULE_CONDITION_OP_LTE:
+		return typeCurValue <= typeNeedValue, nil
+	case RULE_CONDITION_OP_GT:
+		return typeCurValue > typeNeedValue, nil
+	case RULE_CONDITION_OP_GTE:
+		return typeCurValue >= typeNeedValue, nil
+	case RULE_CONDITION_OP_IN:
+		isContain := false
+		for _, v1 := range values {
+			typeNeedValue, err := cast.ToFloat32E(v1)
+			if err != nil {
+				return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "float32", v1, err.Error())
+			}
+			if typeCurValue == typeNeedValue {
+				isContain = true
+				break
+			}
+		}
+		return isContain, nil
+	case RULE_CONDITION_OP_NIN:
+		isContain := false
+		for _, v1 := range values {
+			typeNeedValue, err := cast.ToFloat32E(v1)
+			if err != nil {
+				return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "float32", v1, err.Error())
+			}
+			if typeCurValue == typeNeedValue {
+				isContain = true
+				break
+			}
+		}
+		return !isContain, nil
+	case RULE_CONDITION_OP_BT:
+		typeNeedValue1, err := cast.ToFloat32E(values[1])
+		if err != nil {
+			return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "float32", values[1], err.Error())
+		}
+		return typeNeedValue1 >= typeCurValue && typeNeedValue <= typeCurValue, nil
+	case RULE_CONDITION_OP_NBT:
+		typeNeedValue1, err := cast.ToFloat32E(values[1])
+		if err != nil {
+			return false, fmt.Errorf("要求属性:%s 并非类型:%s 而是:%T err:%s", key, "float32", values[1], err.Error())
+		}
+		return !(typeNeedValue1 >= typeCurValue && typeNeedValue <= typeCurValue), nil
+	}
+	return false, nil
+}
+
+func CheckConditionProperty(propertyDef *BaseParamDefine, op, key string, subKey string, values []any, curValue any) (bool, error) {
+	switch propertyDef.Type {
+	case DataTypeBool:
+		return CheckConditionBool(propertyDef.BoolOptions.Default, op, key, values, curValue)
+	case DataTypeInt:
+		return CheckConditionInt(propertyDef.IntOptions.Default, op, key, values, curValue)
+	case DataTypeString:
+		return CheckConditionString("", op, key, values, curValue)
+	case DataTypeFloat:
+		return CheckConditionFloat(propertyDef.FloatOptions.Default, op, key, values, curValue)
+	case DataTypeArray:
+		index, err := cast.ToIntE(subKey)
+		if err != nil {
+			return false, err
+		}
+
+		propertySub := propertyDef.ArrayOptions.Array[0]
+		if propertyDef.ArrayOptions.Max != 0 && propertyDef.ArrayOptions.Min != 0 {
+			if index > int(propertyDef.ArrayOptions.Max) || index < int(propertyDef.ArrayOptions.Min) {
+				return false, fmt.Errorf("物模型数组越界:%d", index)
+			}
+		}
+		arr, ok := curValue.([]any)
+		if !ok {
+			return false, fmt.Errorf("数组类型错误")
+		}
+
+		if len(arr) <= index {
+			return false, fmt.Errorf("数组越界:%d", index)
+		}
+		curValue = arr[index]
+		return CheckConditionProperty(propertySub, op, subKey, "", values, curValue)
+	case DataTypeObject:
+		mapkey, err := cast.ToStringE(subKey)
+		if err != nil {
+			return false, err
+		}
+
+		propertySub := propertyDef.ObjectOptions.Object[mapkey]
+		curMap, ok := curValue.(map[string]any)
+		if !ok {
+			return false, fmt.Errorf("字典类型错误")
+		}
+
+		curValue, ok = curMap[mapkey]
+		if !ok {
+			return false, fmt.Errorf("当前值不存在")
+		}
+		return CheckConditionProperty(propertySub, op, subKey, "", values, curValue)
+	default:
+		return false, fmt.Errorf("物模型属性数据类型错误:%s", propertyDef.Type)
+	}
+}
+
+func CheckConditionContext(preContext map[string]any, op, firstKey string, subKey string, values []any) (bool, error) {
+	curValue, ok := preContext[firstKey]
+	if !ok {
+		return false, fmt.Errorf("运行节点参数不存在:%s", firstKey)
+	}
+
+	if firstKey == "code" {
+		return CheckConditionInt(-1, op, firstKey, values, curValue)
+	} else if firstKey == "msg" {
+		return CheckConditionString("", op, firstKey, values, curValue)
+	} else if firstKey == "result" {
+		subValueMap, ok := curValue.(map[string]any)
+		if !ok {
+			return false, fmt.Errorf("运行节点参数类型错误，不是map[string]any:%s", firstKey)
+		}
+		subValue, ok := subValueMap[subKey]
+		if !ok {
+			return false, fmt.Errorf("运行节点参数类型错误，未找到二级key:%s", subKey)
+		}
+		//尝试浮点型判断
+		_, err := cast.ToFloat32E(subValue)
+		if err == nil {
+			return CheckConditionFloat(0, op, subKey, values, subValue)
+		}
+		//字符串
+		_, err = cast.ToStringE(subValue)
+		if err != nil {
+			return false, fmt.Errorf("运行节点参数类型错误，二级key的值转字符串异常:%s", subKey)
+		}
+		return CheckConditionString("", op, subKey, values, subValue)
+	} else {
+		return false, fmt.Errorf("运行节点参数不存在:%s", firstKey)
+	}
+}
+
+func CheckOneConditionIsMatch(ctx map[string]map[string]any, thingInfo *ThingInfo, params map[string]any, preShadow *Shadow, ruleCondition *RuleCondition) (bool, error) {
+	firstKey := ruleCondition.Key.Word[0]
+	secornKey := ""
+	if len(ruleCondition.Key.Word) > 1 {
+		secornKey = ruleCondition.Key.Word[1]
+	}
+	switch ruleCondition.Key.From {
+	case RULE_CONDITION_KEY_FROM_MODEL:
+		//物模型
+		propertyDef, ok := thingInfo.PropertyMap[firstKey]
+		if !ok {
+			return false, fmt.Errorf("物模型没有对应的属性:%s", firstKey)
+		}
+		curValue, ok := params[firstKey]
+		if !ok {
+			curValueObj, ok1 := preShadow.Properties[firstKey]
+			if ok1 {
+				curValue = curValueObj.Current
+			}
+			ok = ok1
+		}
+		return CheckConditionProperty(&propertyDef.BaseParamDefine, ruleCondition.Op, firstKey, secornKey, ruleCondition.Values, curValue)
+	case RULE_CONDITION_KEY_FROM_MODEL_PRE:
+		//物模型
+		propertyDef, ok := thingInfo.PropertyMap[firstKey]
+		if !ok {
+			return false, fmt.Errorf("物模型没有对应的属性:%s", firstKey)
+		}
+		var curValue any
+		curValueObj, ok := preShadow.Properties[firstKey]
+		if ok {
+			curValue = curValueObj.Current
+		}
+		return CheckConditionProperty(&propertyDef.BaseParamDefine, ruleCondition.Op, firstKey, secornKey, ruleCondition.Values, curValue)
+	case RULE_CONDITION_KEY_FROM_SYS:
+		//系统预设参数 cur_time(秒级时间戳)
+		if firstKey == "cur_time" {
+			return CheckConditionInt(int32(time.Now().Unix()), ruleCondition.Op, firstKey, ruleCondition.Values, nil)
+		} else {
+			return false, fmt.Errorf("不支持该系统参数:%s", firstKey)
+		}
+	case RULE_CONDITION_KEY_FROM_PRE:
+		//前一个节点结果 code msg result.xxx result.xxx.xxx
+		if ctx == nil {
+			return false, fmt.Errorf("找不到上下文")
+		}
+		preContext, ok := ctx["__pre"]
+		if !ok {
+			return false, fmt.Errorf("未有前置运行节点结果")
+		}
+		return CheckConditionContext(preContext, ruleCondition.Op, firstKey, secornKey, ruleCondition.Values)
+	default:
+		return false, fmt.Errorf("不支持该条件参数类型")
+	}
+}
+
+func FirstConditionIsMatch(ctx map[string]map[string]any, thingInfo *ThingInfo, params map[string]any, preShadow *Shadow, ruleConditions []*RuleCondition) (bool, error) {
+	var conditionResult bool
+	var oneConditionResult bool
+	var oneConditionErr error
+	for _, v := range ruleConditions {
+		oneConditionResult, oneConditionErr = CheckOneConditionIsMatch(ctx, thingInfo, params, preShadow, v)
+		if oneConditionErr != nil {
+			return false, oneConditionErr
+		}
+
+		if v.Next != nil {
+			nextConditionResult, nextConditionErr := CheckOneConditionIsMatch(ctx, thingInfo, params, preShadow, v)
+			if nextConditionErr != nil {
+				return false, nextConditionErr
+			}
+
+			if v.Next.IsAnd {
+				oneConditionResult = oneConditionResult && nextConditionResult
+			} else {
+				oneConditionResult = oneConditionResult || nextConditionResult
+			}
+		}
+
+		if v.Next.IsAnd {
+			conditionResult = conditionResult && oneConditionResult
+		} else {
+			conditionResult = conditionResult || oneConditionResult
+		}
+	}
+	return conditionResult, nil
 }

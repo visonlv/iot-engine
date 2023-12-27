@@ -24,6 +24,7 @@ type DecodeResult struct {
 	MsgType             string
 	NatsMsg             *messaging.Message
 	Device              *Device
+	Product             *Product
 	PayloadResult       any
 	PayloadCommonResult define.CommonPayload
 }
@@ -52,6 +53,7 @@ func (d *EventHandler) handlePropertyMsg(msgType, code string, msg *messaging.Me
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 
 	// 批量属性判断
@@ -107,6 +109,7 @@ func (d *EventHandler) handlePropertyReplyMsg(msgType, code string, msg *messagi
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 
 	return decodeResult, nil
@@ -135,6 +138,7 @@ func (d *EventHandler) handleEventMsg(msgType, code string, msg *messaging.Messa
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 
 	eventDef, ok := product.ThingInfo.EventMap[code]
@@ -189,6 +193,7 @@ func (d *EventHandler) handleServiceMsg(msgType, code string, msg *messaging.Mes
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 
 	serviceDef, ok := product.ThingInfo.UpServiceMap[code]
@@ -242,6 +247,7 @@ func (d *EventHandler) handleServiceReplyMsg(msgType, code string, msg *messagin
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 	serviceDef, ok := product.ThingInfo.DownServiceMap[code]
 	if !ok {
@@ -312,6 +318,7 @@ func (d *EventHandler) handleDownServiceMsg(msgType, code string, msg *messaging
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 
 	serviceDef, ok := product.ThingInfo.DownServiceMap[code]
@@ -366,6 +373,7 @@ func (d *EventHandler) handleDownServiceReplyMsg(msgType, code string, msg *mess
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 	serviceDef, ok := product.ThingInfo.UpServiceMap[code]
 	if !ok {
@@ -418,6 +426,7 @@ func (d *EventHandler) handleDownPropertyMsg(msgType, code string, msg *messagin
 		PayloadResult:       info,
 		PayloadCommonResult: info.CommonPayload,
 		Device:              device,
+		Product:             product,
 	}
 
 	// 批量属性判断

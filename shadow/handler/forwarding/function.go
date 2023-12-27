@@ -124,6 +124,7 @@ func Watch(ctx context.Context, req *pb.ForwardingWatchReq, s *pb.ForwardingServ
 				contextId:      contextId,
 				ctx:            childCtx,
 				watchSourceReq: req,
+				form:           "route",
 			},
 		},
 	}
@@ -156,8 +157,80 @@ func Watch(ctx context.Context, req *pb.ForwardingWatchReq, s *pb.ForwardingServ
 			logger.Infof("[forwarding] Watch contextId:%s Done", contextId)
 			return nil
 		case e := <-event.outCh:
-			msg := e.param.(*messaging.Message)
-			err := s.Send(&pb.ForwardingWatchResp{M: msg})
+			msg := e.param.(*GetWatchResp)
+			err := s.Send(&pb.ForwardingWatchResp{M: msg.Msg})
+			if err != nil {
+				logger.Infof("[forwarding] Watch contextId:%s Send err:%s", contextId, err)
+				return err
+			}
+		}
+	}
+}
+
+func WatchByRule(ctx context.Context, req *pb.ForwardingWatchReq, ruleInfo *RuleInfo, callBack func(*GetWatchResp) error) error {
+	//广播
+	children := make([]*executorChild, 0)
+	if len(req.Pks) > 0 || len(req.Sns) == 0 {
+		children = _p.executorChildren
+	}
+
+	//节点
+	if len(req.Sns) > 0 {
+		isEnterMap := make(map[int]*executorChild)
+		for _, v := range req.Sns {
+			child := _p.getExecutorChild(v)
+			if _, ok := isEnterMap[child.ExecutorChildIndex]; !ok {
+				isEnterMap[child.ExecutorChildIndex] = child
+				children = append(children, child)
+			}
+		}
+	}
+
+	childCtx, cancelFunc := context.WithCancel(ctx)
+	contextId := req.ContextId
+	event := &ChanInEvent{
+		outCh: make(chan *ChanEvent, 128),
+		in: &ChanEvent{
+			eventType: addWatchEventType,
+			param: &addWatchEventReq{
+				contextId:      contextId,
+				ctx:            childCtx,
+				watchSourceReq: req,
+				form:           "rule",
+				ruleInfo:       ruleInfo,
+			},
+		},
+	}
+
+	for _, v := range children {
+		v.asyncAddEvent(event)
+	}
+
+	defer func() {
+		logger.Infof("[forwarding] Watch contextId:%s finish", contextId)
+		cancelFunc()
+		//移除watch事件
+		event := &ChanInEvent{
+			outCh: make(chan *ChanEvent),
+			in: &ChanEvent{
+				eventType: cancelWatchEventType,
+				param:     contextId,
+			},
+		}
+		for _, v := range children {
+			v.asyncAddEvent(event)
+		}
+	}()
+
+	logger.Infof("[forwarding] Watch contextId:%s", contextId)
+
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Infof("[forwarding] Watch contextId:%s Done", contextId)
+			return nil
+		case e := <-event.outCh:
+			err := callBack(e.param.(*GetWatchResp))
 			if err != nil {
 				logger.Infof("[forwarding] Watch contextId:%s Send err:%s", contextId, err)
 				return err
@@ -217,4 +290,19 @@ func GetProductByPks(pks []string) (map[string]*Product, error) {
 	result := <-event.outCh
 	resp := result.param.(*getProductMapResp)
 	return resp.pk2Product, resp.err
+}
+
+func GetDeviceAndProduct(sn string) (*Device, *Product, error) {
+	event := &ChanInEvent{
+		outCh: make(chan *ChanEvent),
+		in: &ChanEvent{
+			eventType: getDeviceAndProductEventType,
+			param:     sn,
+		},
+	}
+	child := _p.getExecutorChild(sn)
+	child.asyncAddEvent(event)
+	result := <-event.outCh
+	resp := result.param.(*getDeviceAndProductResp)
+	return resp.device, resp.product, resp.err
 }

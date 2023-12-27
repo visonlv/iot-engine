@@ -175,3 +175,23 @@ type DownMsgContext struct {
 	ctx       context.Context
 	outCh     chan *ChanEvent
 }
+
+type GetWatchResp struct {
+	Msg        *messaging.Message
+	RuleInfo   *RuleInfo
+	SwitchPass bool
+}
+
+type RuleInfo struct {
+	Id          string
+	Name        string
+	TriggerType string
+	Trigger     string
+	TriggerInfo *define.RuleTrigger
+	Action      string
+	ActionInfo  *define.RuleNode
+	IsClose     bool
+	Ctx         context.Context
+	CancelFunc  context.CancelFunc
+	RunningId   string
+}

@@ -27,6 +27,8 @@ type subscription struct {
 	out       chan *ChanEvent
 	ctx       context.Context
 	tokens    []string
+	from      string
+	ruleInfo  *RuleInfo
 }
 
 type matchResult struct {

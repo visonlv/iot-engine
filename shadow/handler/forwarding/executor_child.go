@@ -37,6 +37,7 @@ const (
 	saveShadowResultEventType
 	getDeviceListEventType
 	getProductMapEventType
+	getDeviceAndProductEventType
 )
 
 type ChanEvent struct {
@@ -63,11 +64,19 @@ type addWatchEventReq struct {
 	contextId      string
 	ctx            context.Context
 	watchSourceReq *pb.ForwardingWatchReq
+	form           string //route rule
+	ruleInfo       *RuleInfo
 }
 
 type getProductMapResp struct {
 	pk2Product map[string]*Product
 	err        error
+}
+
+type getDeviceAndProductResp struct {
+	product *Product
+	device  *Device
+	err     error
 }
 
 type executorChild struct {
@@ -162,6 +171,11 @@ func (s *executorChild) handleMsg(event *ChanInEvent) {
 		outCh <- &ChanEvent{
 			eventType: eventIn.eventType,
 			param:     s.getProductMap(eventParam.([]string)),
+		}
+	case getDeviceAndProductEventType:
+		outCh <- &ChanEvent{
+			eventType: eventIn.eventType,
+			param:     s.getDeviceAndProduct(eventParam.(string)),
 		}
 	default:
 		logger.Infof("[forwarding] not suport eventType:%d", eventType)
@@ -323,6 +337,18 @@ func (s *executorChild) getProductMap(pks []string) *getProductMapResp {
 		pk2Product[v] = p
 	}
 	return &getProductMapResp{pk2Product: pk2Product}
+}
+
+func (s *executorChild) getDeviceAndProduct(sn string) *getDeviceAndProductResp {
+	resp := &getDeviceAndProductResp{}
+	dInfo, product, err := s.devices.getDeviceAndProduct(sn)
+	if err != nil {
+		logger.Infof("[forwarding] getDeviceAndProduct sn:%s err:%s", sn, err.Error())
+	}
+	resp.device = dInfo
+	resp.product = product
+	resp.err = err
+	return resp
 }
 
 func (s *executorChild) asyncAddEvent(event *ChanInEvent) {
@@ -516,9 +542,9 @@ func (s *executorChild) handlerNatsMsg(msg *messaging.Message) {
 		logger.Errorf("[forwarding] handlerNatsMsg decode msg fail:%s", err.Error())
 		return
 	}
-	s.trySaveShadow(decodeResult)
-	s.tryWaitUpContext(decodeResult)
 	s.tryHandlerWatchEvent(decodeResult)
+	s.tryWaitUpContext(decodeResult)
+	s.trySaveShadow(decodeResult)
 	s.trySaveLog(decodeResult, code)
 }
 
@@ -594,7 +620,7 @@ func (s *executorChild) tryWaitUpContext(result *DecodeResult) {
 func (s *executorChild) tryHandlerWatchEvent(result *DecodeResult) {
 	msgType := result.MsgType
 	msg := result.NatsMsg
-	pk, sn, _, msgType, code, _, err := commonclient.DecodeNatsTopic(msg.Topic)
+	pk, sn, _, msgType, code, isUp, err := commonclient.DecodeNatsTopic(msg.Topic)
 	if err != nil {
 		logger.Errorf("[forwarding] tryHandlerWatchEvent index:%d DecodeNatsTopic topic:%s fail:%s ", s.ExecutorChildIndex, msg.Topic, err.Error())
 		return
@@ -604,18 +630,50 @@ func (s *executorChild) tryHandlerWatchEvent(result *DecodeResult) {
 	if len(r.psubs) == 0 {
 		return
 	}
-	e := &ChanEvent{eventType: addWatchEventType, param: msg}
-	for _, v := range r.psubs {
-		select {
-		case <-v.ctx.Done():
-			logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s is Done", s.ExecutorChildIndex, v.contextId)
-			continue
-		case v.out <- e:
-			logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s sended", s.ExecutorChildIndex, v.contextId)
-			continue
-		default:
-			logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s blook", s.ExecutorChildIndex, v.contextId)
-			v.out <- e
+
+	resp := &GetWatchResp{Msg: msg}
+	event := &ChanEvent{eventType: addWatchEventType, param: resp}
+	shouldNotify := true
+	if len(r.psubs) > 0 {
+		firstSub := r.psubs[0]
+		if firstSub.from == "rule" {
+			newParams := make(map[string]any)
+			if isUp && msgType == define.MsgTypeProperty {
+				info := result.PayloadResult.(define.UpPropertyPayload)
+				newParams = info.Params
+			}
+
+			ok, err := define.FirstConditionIsMatch(make(map[string]map[string]any), result.Product.ThingInfo, newParams, result.Device.Shadow, firstSub.ruleInfo.ActionInfo.Conditions)
+			if err != nil {
+				logger.Errorf("[forwarding] tryHandlerWatchEvent contextId:%s FirstConditionIsMatch fail:%s", firstSub.contextId, err)
+			}
+			shouldNotify = ok
+			resp.RuleInfo = firstSub.ruleInfo
+
+			if firstSub.ruleInfo.ActionInfo.SwitchConditions != nil {
+				ok, err := define.FirstConditionIsMatch(make(map[string]map[string]any), result.Product.ThingInfo, newParams, result.Device.Shadow, firstSub.ruleInfo.ActionInfo.SwitchConditions)
+				if err != nil {
+					logger.Errorf("[forwarding] tryHandlerWatchEvent contextId:%s FirstConditionIsMatch fail:%s", firstSub.contextId, err)
+				}
+				resp.SwitchPass = ok
+			}
+		}
+
+		if shouldNotify {
+			for _, v := range r.psubs {
+				//判断是否规则类型的订阅，需要检查条件
+				select {
+				case <-v.ctx.Done():
+					logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s is Done", s.ExecutorChildIndex, v.contextId)
+					continue
+				case v.out <- event:
+					logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s sended", s.ExecutorChildIndex, v.contextId)
+					continue
+				default:
+					logger.Infof("[forwarding] tryHandlerWatchEvent index:%d contextId:%s blook", s.ExecutorChildIndex, v.contextId)
+					v.out <- event
+				}
+			}
 		}
 	}
 }
@@ -663,6 +721,10 @@ func (s *executorChild) tryPublishChildMsg(result *DecodeResult) {
 }
 
 func (s *executorChild) addWatch(req *addWatchEventReq, outCh chan *ChanEvent) {
+	//try cancel same context
+	if _, ok := s.contextId2SubList[req.contextId]; ok {
+		s.cancelWatch(req.contextId)
+	}
 	sourceReq := req.watchSourceReq
 	msgTypes := make([]string, 0)
 	for _, v := range sourceReq.MsgTypes {
@@ -701,6 +763,8 @@ func (s *executorChild) addWatch(req *addWatchEventReq, outCh chan *ChanEvent) {
 			ctx:       req.ctx,
 			tokens:    v,
 			contextId: req.contextId,
+			ruleInfo:  req.ruleInfo,
+			from:      req.form,
 		}
 		err := s.match.Insert(sub)
 		if err != nil {

@@ -16,8 +16,12 @@ require (
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/cast v1.5.1
 	github.com/taosdata/driver-go/v3 v3.5.0
+	github.com/visonlv/iot-engine/common v0.0.0-20231218092732-4206564b1e5a
+	github.com/visonlv/iot-engine/group v0.0.0-20231218092732-4206564b1e5a
+	github.com/visonlv/iot-engine/thing v0.0.0-20231218092732-4206564b1e5a
 )
 
 require (
@@ -32,10 +36,8 @@ require (
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
-	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/nats-io/jwt/v2 v2.5.3 // indirect
 	github.com/nats-io/nkeys v0.4.6 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
@@ -43,7 +45,6 @@ require (
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20231012201019-e917dd12ba7a // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231012201019-e917dd12ba7a // indirect
 	gorm.io/driver/mysql v1.5.1 // indirect
