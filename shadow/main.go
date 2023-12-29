@@ -16,6 +16,7 @@ import (
 	"github.com/visonlv/iot-engine/shadow/app"
 	"github.com/visonlv/iot-engine/shadow/handler/client"
 	"github.com/visonlv/iot-engine/shadow/handler/forwarding"
+	"github.com/visonlv/iot-engine/shadow/handler/rule"
 	"github.com/visonlv/iot-engine/shadow/model"
 	"github.com/visonlv/iot-engine/shadow/proxy"
 	"github.com/visonlv/iot-engine/shadow/server"
@@ -105,6 +106,8 @@ func main() {
 	startProxy()
 
 	forwarding.Start()
+
+	rule.Start()
 
 	startConfigClient()
 

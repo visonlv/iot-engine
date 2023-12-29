@@ -22,7 +22,7 @@ func CheckConditionAndStart(node NodeIBase, curNode *define.RuleNode, result *No
 		params = make(map[string]any)
 	}
 
-	ok, err := define.FirstConditionIsMatch(node.GetDataCtx(), thingInfo, params, preShadow, curNode.Conditions)
+	ok, err := define.FirstConditionIsMatch(node.GetDataCtx(), thingInfo, params, preShadow, curNode.ConditionPacks)
 	if err != nil {
 		logger.Errorf("[run] startNextChild FirstConditionIsMatch fail:%s", err)
 		node.SetResult(BuildFailResult(node.GetRunningNode(), err))
@@ -31,8 +31,8 @@ func CheckConditionAndStart(node NodeIBase, curNode *define.RuleNode, result *No
 	shouldRun := ok
 
 	isSwitch := false
-	if curNode.SwitchConditions != nil {
-		ok, err := define.FirstConditionIsMatch(node.GetDataCtx(), thingInfo, params, preShadow, curNode.SwitchConditions)
+	if curNode.SwitchConditionPacks != nil {
+		ok, err := define.FirstConditionIsMatch(node.GetDataCtx(), thingInfo, params, preShadow, curNode.SwitchConditionPacks)
 		if err != nil {
 			logger.Errorf("[run] startNextChild FirstConditionIsMatch fail:%s", err)
 			node.SetResult(BuildFailResult(node.GetRunningNode(), err))

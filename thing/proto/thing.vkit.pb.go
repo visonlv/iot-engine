@@ -312,3 +312,156 @@ func (c *RuleServiceClient) Page(ctx context.Context, in *RulePageReq, opts ...g
 func NewRuleServiceClient(name string, cc grpcx.Client) *RuleServiceClient {
 	return &RuleServiceClient{name, cc}
 }
+
+type NotifyConfigServiceClient struct {
+	name string
+	cc   grpcx.Client
+}
+
+func (c *NotifyConfigServiceClient) Add(ctx context.Context, in *NotifyConfigAddReq, opts ...grpc.CallOption) (*NotifyConfigAddResp, error) {
+	out := new(NotifyConfigAddResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyConfigService.Add", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyConfigServiceClient) Del(ctx context.Context, in *NotifyConfigDelReq, opts ...grpc.CallOption) (*NotifyConfigDelResp, error) {
+	out := new(NotifyConfigDelResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyConfigService.Del", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyConfigServiceClient) Update(ctx context.Context, in *NotifyConfigUpdateReq, opts ...grpc.CallOption) (*NotifyConfigUpdateResp, error) {
+	out := new(NotifyConfigUpdateResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyConfigService.Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyConfigServiceClient) Get(ctx context.Context, in *NotifyConfigGetReq, opts ...grpc.CallOption) (*NotifyConfigGetResp, error) {
+	out := new(NotifyConfigGetResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyConfigService.Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyConfigServiceClient) List(ctx context.Context, in *NotifyConfigListReq, opts ...grpc.CallOption) (*NotifyConfigListResp, error) {
+	out := new(NotifyConfigListResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyConfigService.List", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyConfigServiceClient) Page(ctx context.Context, in *NotifyConfigPageReq, opts ...grpc.CallOption) (*NotifyConfigPageResp, error) {
+	out := new(NotifyConfigPageResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyConfigService.Page", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func NewNotifyConfigServiceClient(name string, cc grpcx.Client) *NotifyConfigServiceClient {
+	return &NotifyConfigServiceClient{name, cc}
+}
+
+type NotifyTemplateServiceClient struct {
+	name string
+	cc   grpcx.Client
+}
+
+func (c *NotifyTemplateServiceClient) Add(ctx context.Context, in *NotifyTemplateAddReq, opts ...grpc.CallOption) (*NotifyTemplateAddResp, error) {
+	out := new(NotifyTemplateAddResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyTemplateService.Add", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyTemplateServiceClient) Del(ctx context.Context, in *NotifyTemplateDelReq, opts ...grpc.CallOption) (*NotifyTemplateDelResp, error) {
+	out := new(NotifyTemplateDelResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyTemplateService.Del", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyTemplateServiceClient) Update(ctx context.Context, in *NotifyTemplateUpdateReq, opts ...grpc.CallOption) (*NotifyTemplateUpdateResp, error) {
+	out := new(NotifyTemplateUpdateResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyTemplateService.Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyTemplateServiceClient) Get(ctx context.Context, in *NotifyTemplateGetReq, opts ...grpc.CallOption) (*NotifyTemplateGetResp, error) {
+	out := new(NotifyTemplateGetResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyTemplateService.Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyTemplateServiceClient) List(ctx context.Context, in *NotifyTemplateListReq, opts ...grpc.CallOption) (*NotifyTemplateListResp, error) {
+	out := new(NotifyTemplateListResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyTemplateService.List", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyTemplateServiceClient) Page(ctx context.Context, in *NotifyTemplatePageReq, opts ...grpc.CallOption) (*NotifyTemplatePageResp, error) {
+	out := new(NotifyTemplatePageResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyTemplateService.Page", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func NewNotifyTemplateServiceClient(name string, cc grpcx.Client) *NotifyTemplateServiceClient {
+	return &NotifyTemplateServiceClient{name, cc}
+}
+
+type NotifyLogServiceClient struct {
+	name string
+	cc   grpcx.Client
+}
+
+func (c *NotifyLogServiceClient) Del(ctx context.Context, in *NotifyLogDelReq, opts ...grpc.CallOption) (*NotifyLogDelResp, error) {
+	out := new(NotifyLogDelResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyLogService.Del", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *NotifyLogServiceClient) Page(ctx context.Context, in *NotifyLogPageReq, opts ...grpc.CallOption) (*NotifyLogPageResp, error) {
+	out := new(NotifyLogPageResp)
+	err := c.cc.Invoke(ctx, c.name, "NotifyLogService.Page", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func NewNotifyLogServiceClient(name string, cc grpcx.Client) *NotifyLogServiceClient {
+	return &NotifyLogServiceClient{name, cc}
+}

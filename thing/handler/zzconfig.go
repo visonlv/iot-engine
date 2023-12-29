@@ -15,6 +15,9 @@ func GetList() []interface{} {
 	list = append(list, &ProductService{})
 	list = append(list, &ProductModelService{})
 	list = append(list, &RuleService{})
+	list = append(list, &NotifyConfigService{})
+	list = append(list, &NotifyTemplateService{})
+	list = append(list, &NotifyLogService{})
 	
 	return list
 }
@@ -164,6 +167,76 @@ func GetApiEndpoint() []*grpcx.ApiEndpoint {
 		},{
 			Method:"RuleService.Page",
 			Url:"/rpc/thing/RuleService.Page", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyConfigService.Add",
+			Url:"/rpc/thing/NotifyConfigService.Add", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyConfigService.Del",
+			Url:"/rpc/thing/NotifyConfigService.Del", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyConfigService.Update",
+			Url:"/rpc/thing/NotifyConfigService.Update", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyConfigService.Get",
+			Url:"/rpc/thing/NotifyConfigService.Get", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyConfigService.List",
+			Url:"/rpc/thing/NotifyConfigService.List", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyConfigService.Page",
+			Url:"/rpc/thing/NotifyConfigService.Page", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyTemplateService.Add",
+			Url:"/rpc/thing/NotifyTemplateService.Add", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyTemplateService.Del",
+			Url:"/rpc/thing/NotifyTemplateService.Del", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyTemplateService.Update",
+			Url:"/rpc/thing/NotifyTemplateService.Update", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyTemplateService.Get",
+			Url:"/rpc/thing/NotifyTemplateService.Get", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyTemplateService.List",
+			Url:"/rpc/thing/NotifyTemplateService.List", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyTemplateService.Page",
+			Url:"/rpc/thing/NotifyTemplateService.Page", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyLogService.Del",
+			Url:"/rpc/thing/NotifyLogService.Del", 
+			ClientStream:false, 
+			ServerStream:false,
+		},{
+			Method:"NotifyLogService.Page",
+			Url:"/rpc/thing/NotifyLogService.Page", 
 			ClientStream:false, 
 			ServerStream:false,
 		},

@@ -134,18 +134,22 @@ type RuleCondition struct {
 	Key    *RuleConditionKeyWord `json:"key"`
 	Op     string                `json:"op"`
 	Values []any                 `json:"values"`
-	Next   *RuleCondition        `json:"next"`
+}
+
+type RuleConditionPack struct {
+	IsAnd      bool             `json:"is_and"`
+	Conditions []*RuleCondition `json:"conditions,omitempty"`
 }
 
 type RuleNode struct {
-	Id               string           `json:"id"`
-	Type             string           `json:"type"`
-	NormalType       string           `json:"normal_type"`
-	Conditions       []*RuleCondition `json:"conditions,omitempty"`
-	SwitchConditions []*RuleCondition `json:"switch_conditions,omitempty"`
-	ActionType       string           `json:"action_type"`
-	Action           *RuleAction      `json:"action,omitempty"`
-	Nodes            []*RuleNode      `json:"nodes,omitempty"`
+	Id                   string               `json:"id"`
+	Type                 string               `json:"type"`
+	NormalType           string               `json:"normal_type"`
+	ConditionPacks       []*RuleConditionPack `json:"condition_packs,omitempty"`
+	SwitchConditionPacks []*RuleConditionPack `json:"switch_condition_packs,omitempty"`
+	ActionType           string               `json:"action_type"`
+	Action               *RuleAction          `json:"action,omitempty"`
+	Nodes                []*RuleNode          `json:"nodes,omitempty"`
 }
 
 func RuleActionValid(actionType string, ruleAction *RuleAction) (*RuleAction, error) {
@@ -329,59 +333,67 @@ func RuleNodeIsValid(trigger *RuleTrigger, parentNode *RuleNode, ruleNode *RuleN
 		//分支节点没动作
 		ruleNode.ActionType = ""
 		ruleNode.Action = nil
-		newConditions := make([]*RuleCondition, 0)
-		if ruleNode.Conditions == nil {
-			for _, v := range ruleNode.Conditions {
-				newCondition, err := RuleConditionValid(trigger, v)
-				if err != nil {
-					return nil, err
+		if ruleNode.ConditionPacks == nil {
+			for _, v := range ruleNode.ConditionPacks {
+				newConditions := make([]*RuleCondition, 0)
+				for _, v1 := range v.Conditions {
+					newCondition, err := RuleConditionValid(trigger, v1)
+					if err != nil {
+						return nil, err
+					}
+					newConditions = append(newConditions, newCondition)
 				}
-				newConditions = append(newConditions, newCondition)
+				v.Conditions = newConditions
 			}
 		}
-		ruleNode.Conditions = newConditions
 	case RULE_NODE_TYPE_SERIAL:
 		//串行节点没动作
 		ruleNode.ActionType = ""
 		ruleNode.Action = nil
-		newConditions := make([]*RuleCondition, 0)
-		if ruleNode.Conditions == nil {
-			for _, v := range ruleNode.Conditions {
-				newCondition, err := RuleConditionValid(trigger, v)
-				if err != nil {
-					return nil, err
+		if ruleNode.ConditionPacks == nil {
+			for _, v := range ruleNode.ConditionPacks {
+				newConditions := make([]*RuleCondition, 0)
+				for _, v1 := range v.Conditions {
+					newCondition, err := RuleConditionValid(trigger, v1)
+					if err != nil {
+						return nil, err
+					}
+					newConditions = append(newConditions, newCondition)
 				}
-				newConditions = append(newConditions, newCondition)
+				v.Conditions = newConditions
 			}
 		}
-		ruleNode.Conditions = newConditions
 
-		newSwitchConditions := make([]*RuleCondition, 0)
-		if ruleNode.SwitchConditions == nil {
-			for _, v := range ruleNode.SwitchConditions {
-				newSerialCondition, err := RuleConditionValid(trigger, v)
-				if err != nil {
-					return nil, err
+		if ruleNode.SwitchConditionPacks == nil {
+			for _, v := range ruleNode.SwitchConditionPacks {
+				newConditions := make([]*RuleCondition, 0)
+				for _, v1 := range v.Conditions {
+					newCondition, err := RuleConditionValid(trigger, v1)
+					if err != nil {
+						return nil, err
+					}
+					newConditions = append(newConditions, newCondition)
 				}
-				newSwitchConditions = append(newSwitchConditions, newSerialCondition)
+				v.Conditions = newConditions
 			}
 		}
-		ruleNode.SwitchConditions = newSwitchConditions
 	case RULE_NODE_TYPE_PARALLEL:
 		//并行节点没动作
 		ruleNode.ActionType = ""
 		ruleNode.Action = nil
-		newConditions := make([]*RuleCondition, 0)
-		if ruleNode.Conditions == nil {
-			for _, v := range ruleNode.Conditions {
-				newCondition, err := RuleConditionValid(trigger, v)
-				if err != nil {
-					return nil, err
+		if ruleNode.ConditionPacks == nil {
+			for _, v := range ruleNode.ConditionPacks {
+				newConditions := make([]*RuleCondition, 0)
+				for _, v1 := range v.Conditions {
+					newCondition, err := RuleConditionValid(trigger, v1)
+					if err != nil {
+						return nil, err
+					}
+					newConditions = append(newConditions, newCondition)
 				}
-				newConditions = append(newConditions, newCondition)
+				v.Conditions = newConditions
 			}
 		}
-		ruleNode.Conditions = newConditions
 	case RULE_NODE_TYPE_NORMAL:
 		if parentNode == nil {
 			return nil, fmt.Errorf("普通节点必须有父节点")
@@ -392,23 +404,25 @@ func RuleNodeIsValid(trigger *RuleTrigger, parentNode *RuleNode, ruleNode *RuleN
 			return nil, err
 		}
 		ruleNode.Action = action
-		ruleNode.SwitchConditions = nil
+		ruleNode.SwitchConditionPacks = nil
 		//父节点是分支节点或者并行节点是没有条件的
 		if parentNode.Type == RULE_NODE_TYPE_SWITCH || parentNode.Type == RULE_NODE_TYPE_PARALLEL {
-			ruleNode.Conditions = nil
+			ruleNode.ConditionPacks = nil
 		}
 
-		newConditions := make([]*RuleCondition, 0)
-		if ruleNode.Conditions == nil {
-			for _, v := range ruleNode.Conditions {
-				newCondition, err := RuleConditionValid(trigger, v)
-				if err != nil {
-					return nil, err
+		if ruleNode.ConditionPacks == nil {
+			for _, v := range ruleNode.ConditionPacks {
+				newConditions := make([]*RuleCondition, 0)
+				for _, v1 := range v.Conditions {
+					newCondition, err := RuleConditionValid(trigger, v1)
+					if err != nil {
+						return nil, err
+					}
+					newConditions = append(newConditions, newCondition)
 				}
-				newConditions = append(newConditions, newCondition)
+				v.Conditions = newConditions
 			}
 		}
-		ruleNode.Conditions = newConditions
 	default:
 		return nil, fmt.Errorf("只支持分支/串行/并行/普通节点")
 	}
@@ -866,30 +880,25 @@ func CheckOneConditionIsMatch(ctx map[string]map[string]any, thingInfo *ThingInf
 	}
 }
 
-func FirstConditionIsMatch(ctx map[string]map[string]any, thingInfo *ThingInfo, params map[string]any, preShadow *Shadow, ruleConditions []*RuleCondition) (bool, error) {
+func FirstConditionIsMatch(ctx map[string]map[string]any, thingInfo *ThingInfo, params map[string]any, preShadow *Shadow, ruleConditionPacks []*RuleConditionPack) (bool, error) {
 	var conditionResult bool
 	var oneConditionResult bool
-	var oneConditionErr error
-	for _, v := range ruleConditions {
-		oneConditionResult, oneConditionErr = CheckOneConditionIsMatch(ctx, thingInfo, params, preShadow, v)
-		if oneConditionErr != nil {
-			return false, oneConditionErr
-		}
-
-		if v.Next != nil {
-			nextConditionResult, nextConditionErr := CheckOneConditionIsMatch(ctx, thingInfo, params, preShadow, v)
+	for _, v := range ruleConditionPacks {
+		oneConditionResult = false
+		for _, v2 := range v.Conditions {
+			nextConditionResult, nextConditionErr := CheckOneConditionIsMatch(ctx, thingInfo, params, preShadow, v2)
 			if nextConditionErr != nil {
 				return false, nextConditionErr
 			}
 
-			if v.Next.IsAnd {
+			if v2.IsAnd {
 				oneConditionResult = oneConditionResult && nextConditionResult
 			} else {
 				oneConditionResult = oneConditionResult || nextConditionResult
 			}
 		}
 
-		if v.Next.IsAnd {
+		if v.IsAnd {
 			conditionResult = conditionResult && oneConditionResult
 		} else {
 			conditionResult = conditionResult || oneConditionResult

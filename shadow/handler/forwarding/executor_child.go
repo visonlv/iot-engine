@@ -643,15 +643,15 @@ func (s *executorChild) tryHandlerWatchEvent(result *DecodeResult) {
 				newParams = info.Params
 			}
 
-			ok, err := define.FirstConditionIsMatch(make(map[string]map[string]any), result.Product.ThingInfo, newParams, result.Device.Shadow, firstSub.ruleInfo.ActionInfo.Conditions)
+			ok, err := define.FirstConditionIsMatch(make(map[string]map[string]any), result.Product.ThingInfo, newParams, result.Device.Shadow, firstSub.ruleInfo.ActionInfo.ConditionPacks)
 			if err != nil {
 				logger.Errorf("[forwarding] tryHandlerWatchEvent contextId:%s FirstConditionIsMatch fail:%s", firstSub.contextId, err)
 			}
 			shouldNotify = ok
 			resp.RuleInfo = firstSub.ruleInfo
 
-			if firstSub.ruleInfo.ActionInfo.SwitchConditions != nil {
-				ok, err := define.FirstConditionIsMatch(make(map[string]map[string]any), result.Product.ThingInfo, newParams, result.Device.Shadow, firstSub.ruleInfo.ActionInfo.SwitchConditions)
+			if firstSub.ruleInfo.ActionInfo.SwitchConditionPacks != nil {
+				ok, err := define.FirstConditionIsMatch(make(map[string]map[string]any), result.Product.ThingInfo, newParams, result.Device.Shadow, firstSub.ruleInfo.ActionInfo.SwitchConditionPacks)
 				if err != nil {
 					logger.Errorf("[forwarding] tryHandlerWatchEvent contextId:%s FirstConditionIsMatch fail:%s", firstSub.contextId, err)
 				}

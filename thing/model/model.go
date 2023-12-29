@@ -8,7 +8,7 @@ import (
 // InitTable 初始化数据库表
 func InitTable() {
 	// 自动建表
-	app.Mysql.GetDB().AutoMigrate(&DeviceModel{}, &ProductModel{}, &ProductModelModel{}, &RuleModel{})
+	app.Mysql.GetDB().AutoMigrate(&DeviceModel{}, &ProductModel{}, &ProductModelModel{}, &RuleModel{}, &NotifyLogModel{}, &NotifyTemplateModel{}, &NotifyConfigModel{})
 }
 
 func getTx(tx *mysqlx.MysqlClient) *mysqlx.MysqlClient {

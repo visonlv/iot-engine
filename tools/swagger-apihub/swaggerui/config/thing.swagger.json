@@ -16,6 +16,15 @@
     },
     {
       "name": "RuleService"
+    },
+    {
+      "name": "NotifyConfigService"
+    },
+    {
+      "name": "NotifyTemplateService"
+    },
+    {
+      "name": "NotifyLogService"
     }
   ],
   "consumes": [
@@ -265,6 +274,384 @@
         ],
         "tags": [
           "DeviceService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyConfigService.Add": {
+      "post": {
+        "summary": "通知配置创建",
+        "operationId": "NotifyConfigService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigAddResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyConfigService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyConfigService.Del": {
+      "post": {
+        "summary": "通知配置删除",
+        "operationId": "NotifyConfigService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyConfigService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyConfigService.Get": {
+      "post": {
+        "summary": "通知配置获取",
+        "operationId": "NotifyConfigService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigGetResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyConfigService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyConfigService.List": {
+      "post": {
+        "summary": "通知配置列表",
+        "operationId": "NotifyConfigService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigListReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyConfigService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyConfigService.Page": {
+      "post": {
+        "summary": "通知配置分页",
+        "operationId": "NotifyConfigService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigPageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyConfigService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyConfigService.Update": {
+      "post": {
+        "summary": "通知配置修改",
+        "operationId": "NotifyConfigService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigUpdateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyConfigUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyConfigService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyLogService.Del": {
+      "post": {
+        "summary": "通知日志删除",
+        "operationId": "NotifyLogService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyLogDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyLogDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyLogService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyLogService.Page": {
+      "post": {
+        "summary": "通知日志分页",
+        "operationId": "NotifyLogService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyLogPageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyLogPageReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyLogService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyTemplateService.Add": {
+      "post": {
+        "summary": "通知模板创建",
+        "operationId": "NotifyTemplateService_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateAddResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateAddReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyTemplateService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyTemplateService.Del": {
+      "post": {
+        "summary": "通知模板删除",
+        "operationId": "NotifyTemplateService_Del",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateDelResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateDelReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyTemplateService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyTemplateService.Get": {
+      "post": {
+        "summary": "通知模板获取",
+        "operationId": "NotifyTemplateService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateGetResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateGetReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyTemplateService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyTemplateService.List": {
+      "post": {
+        "summary": "通知模板列表",
+        "operationId": "NotifyTemplateService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateListReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyTemplateService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyTemplateService.Page": {
+      "post": {
+        "summary": "通知模板分页",
+        "operationId": "NotifyTemplateService_Page",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplatePageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplatePageReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyTemplateService"
+        ]
+      }
+    },
+    "/rpc/thing/NotifyTemplateService.Update": {
+      "post": {
+        "summary": "通知模板修改",
+        "operationId": "NotifyTemplateService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateUpdateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNotifyTemplateUpdateReq"
+            }
+          }
+        ],
+        "tags": [
+          "NotifyTemplateService"
         ]
       }
     },
@@ -1228,6 +1615,656 @@
         }
       },
       "title": "设备修改返回结果"
+    },
+    "protoNotifyConfig": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "name": {
+          "type": "string",
+          "title": "通知配置名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config": {
+          "type": "string",
+          "title": "通知数据"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        }
+      }
+    },
+    "protoNotifyConfigAddReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "通知配置名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config": {
+          "type": "string",
+          "title": "通知数据"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        }
+      },
+      "title": "通知配置创建请求参数"
+    },
+    "protoNotifyConfigAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知配置创建返回结果"
+    },
+    "protoNotifyConfigDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知配置id"
+        }
+      },
+      "title": "通知配置删除请求参数"
+    },
+    "protoNotifyConfigDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知配置删除返回结果"
+    },
+    "protoNotifyConfigGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知配置id"
+        }
+      },
+      "title": "通知配置获取请求参数"
+    },
+    "protoNotifyConfigGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoNotifyConfig"
+        }
+      },
+      "title": "通知配置获取返回结果"
+    },
+    "protoNotifyConfigListReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "通知配置名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "only_id_and_name": {
+          "type": "boolean",
+          "title": "结果过滤"
+        }
+      },
+      "title": "通知配置列表请求参数"
+    },
+    "protoNotifyConfigListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoNotifyConfig"
+          }
+        }
+      },
+      "title": "通知配置列表返回结果"
+    },
+    "protoNotifyConfigPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "name": {
+          "type": "string",
+          "title": "通知配置名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        }
+      },
+      "title": "通知配置分页请求参数"
+    },
+    "protoNotifyConfigPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoNotifyConfig"
+          }
+        }
+      },
+      "title": "通知配置分页返回结果"
+    },
+    "protoNotifyConfigUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "name": {
+          "type": "string",
+          "title": "通知配置名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config": {
+          "type": "string",
+          "title": "通知数据"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "通知配置修改请求参数"
+    },
+    "protoNotifyConfigUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知配置修改返回结果"
+    },
+    "protoNotifyLog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知日志id"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "notify_config": {
+          "$ref": "#/definitions/protoNotifyConfig",
+          "title": "通知配置信息"
+        },
+        "notify_template_id": {
+          "type": "string",
+          "title": "通知模板id"
+        },
+        "notify_template": {
+          "$ref": "#/definitions/protoNotifyTemplate",
+          "title": "通知模板信息"
+        },
+        "content": {
+          "type": "string",
+          "title": "消息内容"
+        },
+        "result_status": {
+          "type": "integer",
+          "format": "int32",
+          "title": "执行状态"
+        },
+        "result": {
+          "type": "string",
+          "title": "执行结果"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        }
+      }
+    },
+    "protoNotifyLogDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知日志id"
+        }
+      },
+      "title": "通知日志删除请求参数"
+    },
+    "protoNotifyLogDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知日志删除返回结果"
+    },
+    "protoNotifyLogPageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "notify_template_id": {
+          "type": "string",
+          "title": "通知模板id"
+        }
+      },
+      "title": "通知日志分页请求参数"
+    },
+    "protoNotifyLogPageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoNotifyLog"
+          }
+        }
+      },
+      "title": "通知日志分页返回结果"
+    },
+    "protoNotifyTemplate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知模板id"
+        },
+        "name": {
+          "type": "string",
+          "title": "通知模板名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_template": {
+          "type": "string",
+          "title": "通知模板数据"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "notify_config": {
+          "$ref": "#/definitions/protoNotifyConfig",
+          "title": "通知配置信息"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "int64",
+          "title": "创建时间"
+        }
+      }
+    },
+    "protoNotifyTemplateAddReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "通知模板名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_template": {
+          "type": "string",
+          "title": "通知模板数据"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "通知模板创建请求参数"
+    },
+    "protoNotifyTemplateAddResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知模板创建返回结果"
+    },
+    "protoNotifyTemplateDelReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知模板id"
+        }
+      },
+      "title": "通知模板删除请求参数"
+    },
+    "protoNotifyTemplateDelResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知模板删除返回结果"
+    },
+    "protoNotifyTemplateGetReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知模板id"
+        }
+      },
+      "title": "通知模板获取请求参数"
+    },
+    "protoNotifyTemplateGetResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/protoNotifyTemplate"
+        }
+      },
+      "title": "通知模板获取返回结果"
+    },
+    "protoNotifyTemplateListReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "通知模板名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "only_id_and_name": {
+          "type": "boolean",
+          "title": "结果过滤"
+        }
+      },
+      "title": "通知模板列表请求参数"
+    },
+    "protoNotifyTemplateListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoNotifyTemplate"
+          }
+        }
+      },
+      "title": "通知模板列表返回结果"
+    },
+    "protoNotifyTemplatePageReq": {
+      "type": "object",
+      "properties": {
+        "page_index": {
+          "type": "integer",
+          "format": "int32",
+          "title": "第几页，从1开始"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "title": "每页多少条"
+        },
+        "name": {
+          "type": "string",
+          "title": "通知模板名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        }
+      },
+      "title": "通知模板分页请求参数"
+    },
+    "protoNotifyTemplatePageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protoNotifyTemplate"
+          }
+        }
+      },
+      "title": "通知模板分页返回结果"
+    },
+    "protoNotifyTemplateUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "通知模板id"
+        },
+        "name": {
+          "type": "string",
+          "title": "通知模板名称"
+        },
+        "notify_type": {
+          "type": "string",
+          "title": "通知类型"
+        },
+        "notify_template": {
+          "type": "string",
+          "title": "通知模板数据"
+        },
+        "notify_config_id": {
+          "type": "string",
+          "title": "通知配置id"
+        },
+        "desc": {
+          "type": "string",
+          "title": "描述"
+        }
+      },
+      "title": "通知模板修改请求参数"
+    },
+    "protoNotifyTemplateUpdateResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "通知模板修改返回结果"
     },
     "protoProduct": {
       "type": "object",

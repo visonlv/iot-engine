@@ -870,3 +870,437 @@ message RulePageResp{
 	repeated Rule items = 4;
 }
 
+
+
+// ---------------------------通知配置管理-----------------------------------
+service NotifyConfigService {
+    // 通知配置创建
+    rpc Add(NotifyConfigAddReq) returns (NotifyConfigAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyConfigService.Add"
+            body : "*"
+        };
+    }
+    // 通知配置删除
+    rpc Del(NotifyConfigDelReq) returns (NotifyConfigDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyConfigService.Del"
+            body : "*"
+        };
+    }
+    // 通知配置修改
+    rpc Update(NotifyConfigUpdateReq) returns (NotifyConfigUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyConfigService.Update"
+            body : "*"
+        };
+    }
+    // 通知配置获取
+    rpc Get(NotifyConfigGetReq) returns (NotifyConfigGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyConfigService.Get"
+            body : "*"
+        };
+    }
+    // 通知配置列表
+    rpc List(NotifyConfigListReq) returns (NotifyConfigListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyConfigService.List"
+            body : "*"
+        };
+    }
+    // 通知配置分页
+    rpc Page(NotifyConfigPageReq) returns (NotifyConfigPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyConfigService.Page"
+            body : "*"
+        };
+    }
+}
+
+message NotifyConfig {
+    //通知配置id
+    string id = 1;
+    //通知配置名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //通知类型
+    string notify_type = 3[(validate.rules).string.min_len = 1];
+    //通知数据
+    string notify_config = 4[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 5;
+    //创建时间
+    int64 create_time = 6;
+}
+
+//通知配置创建请求参数
+message NotifyConfigAddReq {
+    //通知配置名称
+    string name = 1 [(validate.rules).string.min_len = 1];
+    //通知类型
+    string notify_type = 2[(validate.rules).string.min_len = 1];
+    //通知数据
+    string notify_config = 3[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 4;
+    //创建时间
+    int64 create_time = 5;
+}
+
+//通知配置创建返回结果
+message NotifyConfigAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知配置删除请求参数
+message NotifyConfigDelReq {
+    //通知配置id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知配置删除返回结果
+message NotifyConfigDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知配置修改请求参数
+message NotifyConfigUpdateReq {
+    //通知配置id
+    string id = 1;
+    //通知配置名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //通知类型
+    string notify_type = 3[(validate.rules).string.min_len = 1];
+    //通知数据
+    string notify_config = 4[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 5;
+}
+
+//通知配置修改返回结果
+message NotifyConfigUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知配置获取请求参数
+message NotifyConfigGetReq {
+    //通知配置id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知配置获取返回结果
+message NotifyConfigGetResp{
+    int32 code = 1;
+    string msg = 2;
+    NotifyConfig item = 3;
+}
+
+//通知配置列表请求参数
+message NotifyConfigListReq {
+    //通知配置名称
+    string name = 1;
+    //通知类型
+    string notify_type = 2;
+    //结果过滤
+    bool only_id_and_name = 3;
+}
+
+//通知配置列表返回结果
+message NotifyConfigListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated NotifyConfig items = 3;
+}
+
+//通知配置分页请求参数
+message NotifyConfigPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //通知配置名称
+    string name = 3;
+    //通知类型
+    string notify_type = 4;
+}
+
+//通知配置分页返回结果
+message NotifyConfigPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated NotifyConfig items = 4;
+}
+
+// ---------------------------通知模板管理-----------------------------------
+service NotifyTemplateService {
+    // 通知模板创建
+    rpc Add(NotifyTemplateAddReq) returns (NotifyTemplateAddResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyTemplateService.Add"
+            body : "*"
+        };
+    }
+    // 通知模板删除
+    rpc Del(NotifyTemplateDelReq) returns (NotifyTemplateDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyTemplateService.Del"
+            body : "*"
+        };
+    }
+    // 通知模板修改
+    rpc Update(NotifyTemplateUpdateReq) returns (NotifyTemplateUpdateResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyTemplateService.Update"
+            body : "*"
+        };
+    }
+    // 通知模板获取
+    rpc Get(NotifyTemplateGetReq) returns (NotifyTemplateGetResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyTemplateService.Get"
+            body : "*"
+        };
+    }
+    // 通知模板列表
+    rpc List(NotifyTemplateListReq) returns (NotifyTemplateListResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyTemplateService.List"
+            body : "*"
+        };
+    }
+    // 通知模板分页
+    rpc Page(NotifyTemplatePageReq) returns (NotifyTemplatePageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyTemplateService.Page"
+            body : "*"
+        };
+    }
+}
+
+message NotifyTemplate {
+    //通知模板id
+    string id = 1;
+    //通知模板名称
+    string name = 2;
+    //通知类型
+    string notify_type = 3;
+    //通知模板数据
+    string notify_template = 4;
+    //通知配置id
+    string notify_config_id = 5;
+    //通知配置信息
+    NotifyConfig notify_config = 6;
+    //描述
+    string desc = 7;
+    //创建时间
+    int64 create_time = 8;
+}
+
+//通知模板创建请求参数
+message NotifyTemplateAddReq {
+    //通知模板名称
+    string name = 1 [(validate.rules).string.min_len = 1];
+    //通知类型
+    string notify_type = 2;
+    //通知模板数据
+    string notify_template = 3[(validate.rules).string.min_len = 1];
+    //通知配置id
+    string notify_config_id = 4[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 5;
+}
+
+//通知模板创建返回结果
+message NotifyTemplateAddResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知模板删除请求参数
+message NotifyTemplateDelReq {
+    //通知模板id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知模板删除返回结果
+message NotifyTemplateDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知模板修改请求参数
+message NotifyTemplateUpdateReq {
+    //通知模板id
+    string id = 1;
+    //通知模板名称
+    string name = 2 [(validate.rules).string.min_len = 1];
+    //通知类型
+    string notify_type = 3;
+    //通知模板数据
+    string notify_template = 4[(validate.rules).string.min_len = 1];
+    //通知配置id
+    string notify_config_id = 5[(validate.rules).string.min_len = 1];
+    //描述
+    string desc = 6;
+}
+
+//通知模板修改返回结果
+message NotifyTemplateUpdateResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知模板获取请求参数
+message NotifyTemplateGetReq {
+    //通知模板id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知模板获取返回结果
+message NotifyTemplateGetResp{
+    int32 code = 1;
+    string msg = 2;
+    NotifyTemplate item = 3;
+}
+
+//通知模板列表请求参数
+message NotifyTemplateListReq {
+    //通知模板名称
+    string name = 1;
+    //通知类型
+    string notify_type = 2;
+    //通知配置id
+    string notify_config_id = 3;
+    //结果过滤
+    bool only_id_and_name = 4;
+}
+
+//通知模板列表返回结果
+message NotifyTemplateListResp{
+    int32 code = 1;
+    string msg = 2;
+    repeated NotifyTemplate items = 3;
+}
+
+//通知模板分页请求参数
+message NotifyTemplatePageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //通知模板名称
+    string name = 3;
+    //通知类型
+    string notify_type = 4;
+    //通知配置id
+    string notify_config_id = 5;
+}
+
+//通知模板分页返回结果
+message NotifyTemplatePageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated NotifyTemplate items = 4;
+}
+
+// ---------------------------通知日志管理-----------------------------------
+service NotifyLogService {
+     // 通知日志删除
+    rpc Del(NotifyLogDelReq) returns (NotifyLogDelResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyLogService.Del"
+            body : "*"
+        };
+    }
+    // 通知日志分页
+    rpc Page(NotifyLogPageReq) returns (NotifyLogPageResp)
+    {
+        option (google.api.http) = {
+            post : "/rpc/thing/NotifyLogService.Page"
+            body : "*"
+        };
+    }
+}
+
+message NotifyLog {
+    //通知日志id
+    string id = 1;
+    //通知类型
+    string notify_type = 2;
+    //通知配置id
+    string notify_config_id = 3;
+    //通知配置信息
+    NotifyConfig notify_config = 4;
+    //通知模板id
+    string notify_template_id = 5;
+    //通知模板信息
+    NotifyTemplate notify_template = 6;
+    //消息内容
+    string content = 7;
+    //执行状态
+    int32 result_status = 8;
+    //执行结果
+    string result = 9;
+    //创建时间
+    int64 create_time = 10;
+}
+
+//通知日志删除请求参数
+message NotifyLogDelReq {
+    //通知日志id
+    string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+//通知日志删除返回结果
+message NotifyLogDelResp{
+    int32 code = 1;
+    string msg = 2;
+    string id = 3;
+}
+
+//通知日志分页请求参数
+message NotifyLogPageReq {
+    //第几页，从1开始
+	int32 page_index = 1;
+	//每页多少条
+	int32 page_size = 2 [(validate.rules).int32={gte: 1}];
+    //通知类型
+    string notify_type = 3;
+    //通知配置id
+    string notify_config_id = 4;
+    //通知模板id
+    string notify_template_id = 5;
+}
+
+//通知日志分页返回结果
+message NotifyLogPageResp{
+    int32 code = 1;
+    string msg = 2;
+    int32 total = 3 ;
+	repeated NotifyLog items = 4;
+}
+
